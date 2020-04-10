@@ -13,7 +13,7 @@ from aiohttp import ClientSession, ClientResponse
 from .database import Database, DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
 
-default_logger = logging.getLogger('wheelchair1.connection')
+default_logger = logging.getLogger('wheelchair.connection')
 
 
 class Connection:
