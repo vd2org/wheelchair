@@ -5,7 +5,7 @@
 
 import typing
 
-from .view import View, ViewProxy
+from .view import ViewProxy
 
 if typing.TYPE_CHECKING:
     from .connection import Connection

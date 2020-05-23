@@ -6,7 +6,7 @@
 from typing import TYPE_CHECKING
 
 from .attachments import Attachments
-from .ddoc import DesignDocument, DesignDocumentsProxy
+from .ddoc import DesignDocumentsProxy
 
 if TYPE_CHECKING:
     from .connection import Connection

@@ -2,13 +2,10 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
-import logging
 import typing
 
 if typing.TYPE_CHECKING:
     from .connection import Connection
-
-default_logger = logging.getLogger('wheelchair.session')
 
 
 class Session:

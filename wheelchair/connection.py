@@ -10,8 +10,10 @@ from urllib.parse import urlsplit, urljoin, quote, urlencode
 
 from aiohttp import ClientSession, ClientResponse
 
+from .active_tasks import ActiveTasks
 from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
+from .server import Server
 from .session import Session
 
 default_logger = logging.getLogger('wheelchair.connection')
@@ -133,6 +135,14 @@ class Connection:
         # Let's try authentication and try again to execute the request
         await self.session.authenticate()
         return await self.direct_query(method, path, params, data)
+
+    @property
+    def server(self) -> Server:
+        return Server(self)
+
+    @property
+    def active_tasks(self) -> ActiveTasks:
+        return ActiveTasks(self)
 
     @property
     def session(self) -> Session:
