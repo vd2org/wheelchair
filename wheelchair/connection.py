@@ -12,39 +12,78 @@ from aiohttp import ClientSession, ClientResponse
 
 from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
+from .session import Session
 
 default_logger = logging.getLogger('wheelchair.connection')
 
 
 class Connection:
-    __session: Optional[ClientSession] = None
+    __asyncio_session: Optional[ClientSession] = None
 
-    def __init__(self, server: str, username: str, password: str, *, logger: Optional[logging.Logger] = None):
+    def __init__(self, scheme: str, hostname: str, port: int, username: str, password: str, *,
+                 logger: Optional[logging.Logger] = None):
         """
 
-        :param server: Connection string to CouchDB
+        :param scheme: Connection string to CouchDB
+        :param hostname: Connection string to CouchDB
+        :param port: Connection string to CouchDB
+        :param username: Connection string to CouchDB
+        :param password: Connection string to CouchDB
         :param logger: Custom logger
         """
 
-        p = urlsplit(server)
-        assert p.hostname, "Server should have hostname!"
-        assert p.scheme in ('http', 'https'), "Scheme should be http or https"
-
-        self.__server = f"{p.scheme}://{p.hostname}:{p.port}/"
+        self.__url = f"{scheme}://{hostname}:{port}/"
         self.__username = username
         self.__password = password
 
-        self.__session = ClientSession()
+        self.__asyncio_session = ClientSession()
         self.__logger = logger or default_logger
 
-    @property
-    def server(self) -> str:
-        return self.__server
+    @classmethod
+    def from_string(cls, connection_string: str, logger: Optional[logging.Logger] = None) -> 'Connection':
+        p = urlsplit(connection_string)
+        assert p.hostname, "Server should have hostname!"
+        assert p.scheme in ('http', 'https'), "Scheme should be http or https"
+        assert p.username, "Connection string should have username"
+        assert p.password, "Connection string should have password"
 
-    async def _query(self, method: str,
-                     path: List[str],
-                     params: Optional[dict] = None,
-                     data: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
+        port = p.port
+
+        if not port:
+            if p.scheme == 'http':
+                port = 5984
+            else:  # https
+                port = 443
+
+        return cls(p.scheme, p.hostname, port, p.username, p.password, logger=logger or default_logger)
+
+    @classmethod
+    def from_string_and_credentials(cls, connection_string: str, username: str, password: str,
+                                    logger: Optional[logging.Logger] = None) -> 'Connection':
+        p = urlsplit(connection_string)
+        assert p.hostname, "Server should have hostname!"
+        assert p.scheme in ('http', 'https'), "Scheme should be http or https"
+        assert p.username is None, "Connection string shouldn't have username"
+        assert p.password is None, "Connection string shouldn't have password"
+
+        port = p.port
+
+        if not port:
+            if p.scheme == 'http':
+                port = 5984
+            else:  # https
+                port = 443
+
+        return cls(p.scheme, p.hostname, port, username, password, logger=logger or default_logger)
+
+    @property
+    def url(self) -> str:
+        return self.__url
+
+    async def direct_query(self, method: str,
+                           path: List[str],
+                           params: Optional[dict] = None,
+                           data: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
 
         path = "/".join([quote(i, safe='') for i in path])
 
@@ -55,11 +94,11 @@ class Connection:
             if qs:
                 path = f"{path}?{qs}"
 
-        full_url = urljoin(self.__server, path)
+        full_url = urljoin(self.__url, path)
 
         self.__logger.debug("Querying CouchDB: %s %s", method, full_url)
 
-        req = await self.__session.request(method, full_url, json=data)
+        req = await self.__asyncio_session.request(method, full_url, json=data)
 
         if not req.content_type == 'application/json':
             return req
@@ -86,136 +125,36 @@ class Connection:
         """
 
         try:
-            return await self._query(method, path, params, data)
+            return await self.direct_query(method, path, params, data)
         except UnauthorizedError:
             pass
 
         # We are here because an UnauthorizedError occurred
         # Let's try authentication and try again to execute the request
-        await self.authenticate()
-        return await self._query(method, path, params, data)
+        await self.session.authenticate()
+        return await self.direct_query(method, path, params, data)
 
-    async def authenticate(self):
-        """\
-        Starts new session on server
-
-        https://docs.couchdb.org/en/latest/api/server/authn.html#post--_session
-        """
-
-        data = {
-            'name': self.__username,
-            'password': self.__password,
-        }
-        return await self._query('POST', ['_session'], data=data)
-
-    async def get(self):
-        """\
-        Return instance metadata
-
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--
-        """
-
-        return await self._query('GET', [])
-
-    async def active_tasks(self):
-        """\
-        List of running tasks
-
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--_active_tasks
-        """
-
-        return await self.query('GET', ['_active_tasks'])
-
-    async def all_dbs(self,
-                      start_key: Optional[Union[list, dict]] = None,
-                      end_key: Optional[Union[list, dict]] = None,
-                      skip: Optional[int] = None,
-                      limit: Optional[int] = None,
-                      descending: Optional[bool] = None):
-        """\
-        Returns a list of all the databases
-
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--_all_dbs
-
-        """
-
-        params = dict(
-            start_key=start_key,
-            end_key=end_key,
-            skip=skip,
-            limit=limit,
-            descending=descending
-        )
-
-        return await self.query('GET', ['_all_dbs'], params=params)
-
-    async def dbs_info(self, keys: List[str]):
-        """\
-        Returns a list of all the databases
-
-        http://docs.couchdb.org/en/latest/api/server/common.html#post--_dbs_info
-
-        """
-
-        return await self.query('POST', ['_dbs_info'], data=dict(keys=keys))
-
-    # move to cluster setup object
-
-    # async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
-    #     """\
-    #     Returns a list of all the databases
-    #
-    #     http://docs.couchdb.org/en/latest/api/server/common.html#get--_cluster_setup
-    #
-    #     """
-    #
-    #     return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
-
-    async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
-        """\
-        Returns a list of all the databases
-
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--_cluster_setup
-
-        """
-
-        return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
-
-    ######
-
-    async def get_session(self):
-        """\
-        Get current session
-
-        https://docs.couchdb.org/en/latest/api/server/authn.html#get--_session
-        """
-        return await self._query('GET', ['_session'])
-
-    async def delete_session(self):
-        """\
-        Close session on server
-
-        https://docs.couchdb.org/en/latest/api/server/authn.html#delete--_session
-        """
-        return await self._query('DELETE', ['_session'])
+    @property
+    def session(self) -> Session:
+        return Session(self, self.__username, self.__password)
 
     @property
     def db(self) -> DatabaseProxy:
         return DatabaseProxy(self)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}('{self.__server}')"
+        return f"{self.__class__.__name__}('{self.__url}')"
 
     async def shutdown_cleanup(self):
-        if self.__session is None:
+        if self.__asyncio_session is None:
             return
 
-        s = self.__session
-        self.__session = None
+        s = self.__asyncio_session
+        self.__asyncio_session = None
         await s.close()
 
     def __del__(self):
-        if self.__session:
+        if self.__asyncio_session:
             self.__logger.warning("Default session is not closed! "
                                   "You must call Connector.shutdown_cleanup() before exit!")
 
