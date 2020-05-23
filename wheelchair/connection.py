@@ -10,7 +10,7 @@ from urllib.parse import urlsplit, urljoin, quote, urlencode
 
 from aiohttp import ClientSession, ClientResponse
 
-from .database import Database, DatabaseProxy
+from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
 
 default_logger = logging.getLogger('wheelchair.connection')
@@ -19,7 +19,7 @@ default_logger = logging.getLogger('wheelchair.connection')
 class Connection:
     __session: Optional[ClientSession] = None
 
-    def __init__(self, server: str, *, logger: Optional[logging.Logger] = None):
+    def __init__(self, server: str, username: str, password: str, *, logger: Optional[logging.Logger] = None):
         """
 
         :param server: Connection string to CouchDB
@@ -29,11 +29,10 @@ class Connection:
         p = urlsplit(server)
         assert p.hostname, "Server should have hostname!"
         assert p.scheme in ('http', 'https'), "Scheme should be http or https"
-        port = p.port if p.port else 5984
 
-        self.__server = f"{p.scheme}://{p.hostname}:{port}/"
-        self.__username = p.username
-        self.__password = p.password
+        self.__server = f"{p.scheme}://{p.hostname}:{p.port}/"
+        self.__username = username
+        self.__password = password
 
         self.__session = ClientSession()
         self.__logger = logger or default_logger
@@ -160,7 +159,6 @@ class Connection:
 
         return await self.query('POST', ['_dbs_info'], data=dict(keys=keys))
 
-
     # move to cluster setup object
 
     # async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
@@ -173,7 +171,6 @@ class Connection:
     #
     #     return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
 
-
     async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
         """\
         Returns a list of all the databases
@@ -183,8 +180,6 @@ class Connection:
         """
 
         return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
-
-
 
     ######
 
