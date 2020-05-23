@@ -109,6 +109,85 @@ class Connection:
         }
         return await self._query('POST', ['_session'], data=data)
 
+    async def get(self):
+        """\
+        Return instance metadata
+
+        http://docs.couchdb.org/en/latest/api/server/common.html#get--
+        """
+
+        return await self._query('GET', [])
+
+    async def active_tasks(self):
+        """\
+        List of running tasks
+
+        http://docs.couchdb.org/en/latest/api/server/common.html#get--_active_tasks
+        """
+
+        return await self.query('GET', ['_active_tasks'])
+
+    async def all_dbs(self,
+                      start_key: Optional[Union[list, dict]] = None,
+                      end_key: Optional[Union[list, dict]] = None,
+                      skip: Optional[int] = None,
+                      limit: Optional[int] = None,
+                      descending: Optional[bool] = None):
+        """\
+        Returns a list of all the databases
+
+        http://docs.couchdb.org/en/latest/api/server/common.html#get--_all_dbs
+
+        """
+
+        params = dict(
+            start_key=start_key,
+            end_key=end_key,
+            skip=skip,
+            limit=limit,
+            descending=descending
+        )
+
+        return await self.query('GET', ['_all_dbs'], params=params)
+
+    async def dbs_info(self, keys: List[str]):
+        """\
+        Returns a list of all the databases
+
+        http://docs.couchdb.org/en/latest/api/server/common.html#post--_dbs_info
+
+        """
+
+        return await self.query('POST', ['_dbs_info'], data=dict(keys=keys))
+
+
+    # move to cluster setup object
+
+    # async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
+    #     """\
+    #     Returns a list of all the databases
+    #
+    #     http://docs.couchdb.org/en/latest/api/server/common.html#get--_cluster_setup
+    #
+    #     """
+    #
+    #     return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
+
+
+    async def get_cluster_setup(self, ensure_dbs_exist: List[str]):
+        """\
+        Returns a list of all the databases
+
+        http://docs.couchdb.org/en/latest/api/server/common.html#get--_cluster_setup
+
+        """
+
+        return await self.query('GET', ['_cluster_setup'], params=dict(ensure_dbs_exist=ensure_dbs_exist))
+
+
+
+    ######
+
     async def get_session(self):
         """\
         Get current session
@@ -126,11 +205,8 @@ class Connection:
         return await self._query('DELETE', ['_session'])
 
     @property
-    def dbs(self) -> DatabaseProxy:
+    def db(self) -> DatabaseProxy:
         return DatabaseProxy(self)
-
-    def get_db(self, name: str) -> Database:
-        return Database(self, name)
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.__server}')"

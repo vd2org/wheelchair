@@ -17,7 +17,10 @@ class DesignDocumentsProxy:
         self.__connection = connection
         self.__database = database
 
-    def __getattr__(self, attr) -> 'DesignDocument':
+    def __call__(self, name: str) -> 'DesignDocument':
+        return DesignDocument(self.__connection, self.__database, name)
+
+    def __getattr__(self, attr: str) -> 'DesignDocument':
         return DesignDocument(self.__connection, self.__database, attr)
 
 
@@ -31,9 +34,6 @@ class DesignDocument:
     def name(self) -> str:
         return self.__name
 
-    def get_view(self, name: str) -> View:
-        return View(self.__connection, self.__database, self, name)
-
     @property
-    def views(self) -> ViewProxy:
+    def view(self) -> ViewProxy:
         return ViewProxy(self.__connection, self.__database, self)

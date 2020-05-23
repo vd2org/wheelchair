@@ -16,6 +16,9 @@ class DatabaseProxy:
     def __init__(self, connection: 'Connection'):
         self.__connection = connection
 
+    def __call__(self, name: str):
+        return Database(self.__connection, name)
+
     def __getattr__(self, attr) -> 'Database':
         return Database(self.__connection, attr)
 
@@ -62,11 +65,8 @@ class Database:
     async def bulk_insert(self, doc: dict):
         return await self.__connection.query('POST', [self.__name, '_bulk_docs'], data=doc)
 
-    def get_ddoc(self, name: str) -> DesignDocument:
-        return DesignDocument(self.__connection, self, name)
-
     @property
-    def ddocs(self) -> DesignDocumentsProxy:
+    def ddoc(self) -> DesignDocumentsProxy:
         return DesignDocumentsProxy(self.__connection, self)
 
     @property

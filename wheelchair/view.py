@@ -17,7 +17,10 @@ class ViewProxy:
         self.__database = database
         self.__ddoc = ddoc
 
-    def __getattr__(self, attr) -> 'View':
+    def __call__(self, name: str) -> 'View':
+        return View(self.__connection, self.__database, self.__ddoc, name)
+
+    def __getattr__(self, attr: str) -> 'View':
         return View(self.__connection, self.__database, self.__ddoc, attr)
 
 
