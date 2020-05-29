@@ -1,2 +1,3 @@
-# wheelchair
-The async CouchDB connector
+# Wheelchair
+
+The async CouchDB connector for Python
