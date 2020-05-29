@@ -1,6 +1,11 @@
 name: TEST
 
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - !v*
+  pull_request:
+    ~
 
 jobs:
 
