@@ -1,0 +1,35 @@
+name: TEST
+
+on:
+  release:
+    types: [published]
+
+jobs:
+
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements-package.txt
+
+      - name: Build
+        run: |
+          python3 setup.py sdist bdist_wheel
+
+      - name: Publish
+        env: # Or as an environment variable
+          pypi_username: ${{ secrets.PYPI_USERNAME }}
+          pypi_password: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python3 -m twine upload -u $PYPI_USERNAME -p $secrets.PYPI_PASSWORD dist/*
