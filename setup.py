@@ -7,11 +7,9 @@ from os.path import join, dirname
 
 import setuptools
 
-from wheelchair.version import version
-
 setuptools.setup(
     name='wheelchair',
-    version=version(),
+    version='0.0.1',
     author='Vd',
     author_email='vd@vd2.org',
     url='https://github.com/vd2org/wheelchair',
