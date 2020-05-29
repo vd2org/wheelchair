@@ -5,22 +5,20 @@
 
 from typing import Optional, Union, List
 
-from pydantic import BaseModel
-
 from ..utils import SimpleScope
 
 
-class ActiveTasksResult(BaseModel):
-    changes_done: int
-    database: str
-    pid: str
-    progress: int
-    started_on: int
-    status: str
-    task: str
-    total_changes: int
-    type: str
-    updated_on: int
+# class ActiveTasksResult(BaseModel):
+#     changes_done: int
+#     database: str
+#     pid: str
+#     progress: int
+#     started_on: int
+#     status: str
+#     task: str
+#     total_changes: int
+#     type: str
+#     updated_on: int
 
 
 class Server(SimpleScope):
@@ -33,7 +31,7 @@ class Server(SimpleScope):
 
         return await self._connection.query('GET', [])
 
-    async def active_tasks(self) -> List[ActiveTasksResult]:
+    async def active_tasks(self) -> List[dict]:
         """\
         Returns database's active tasks
 
@@ -41,7 +39,8 @@ class Server(SimpleScope):
         """
 
         res = await self._connection.query('GET', ['_active_tasks'])
-        return [ActiveTasksResult.parse_obj(e) for e in res]
+        # return [ActiveTasksResult.parse_obj(e) for e in res]
+        return res
 
     async def all_dbs(self,
                       start_key: Optional[Union[list, dict]] = None,
