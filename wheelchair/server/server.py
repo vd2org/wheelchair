@@ -3,22 +3,24 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
+from dataclasses import dataclass
 from typing import Optional, Union, List
 
 from ..utils import SimpleScope
 
 
-# class ActiveTasksResult(BaseModel):
-#     changes_done: int
-#     database: str
-#     pid: str
-#     progress: int
-#     started_on: int
-#     status: str
-#     task: str
-#     total_changes: int
-#     type: str
-#     updated_on: int
+@dataclass(frozen=True)
+class ActiveTasksResult:
+    changes_done: int
+    database: str
+    pid: str
+    progress: int
+    started_on: int
+    status: str
+    task: str
+    total_changes: int
+    type: str
+    updated_on: int
 
 
 class Server(SimpleScope):
@@ -31,7 +33,7 @@ class Server(SimpleScope):
 
         return await self._connection.query('GET', [])
 
-    async def active_tasks(self) -> List[dict]:
+    async def active_tasks(self) -> List[ActiveTasksResult]:
         """\
         Returns database's active tasks
 
@@ -39,8 +41,7 @@ class Server(SimpleScope):
         """
 
         res = await self._connection.query('GET', ['_active_tasks'])
-        # return [ActiveTasksResult.parse_obj(e) for e in res]
-        return res
+        return [ActiveTasksResult(**e) for e in res]
 
     async def all_dbs(self,
                       start_key: Optional[Union[list, dict]] = None,
@@ -95,7 +96,7 @@ class Server(SimpleScope):
 
         return await self._connection.query('GET', ['_up'])
 
-    async def uuids(self, count: int) -> List[str]:
+    async def uuids(self, count: int = 1) -> List[str]:
         """\
         Generate UUIDs by the server
 

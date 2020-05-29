@@ -2,10 +2,19 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
+
+from dataclasses import dataclass
 import typing
 
 if typing.TYPE_CHECKING:
     from .connection import Connection
+
+
+@dataclass(frozen=True)
+class SessionResult:
+    ok: bool
+    userCtx: dict
+    info: dict
 
 
 class Session:
@@ -13,6 +22,16 @@ class Session:
         self.__connection = connection
         self.__username = username
         self.__password = password
+
+    async def __call__(self) -> SessionResult:
+        """\
+        Get current session
+
+        https://docs.couchdb.org/en/latest/api/server/authn.html#get--_session
+        """
+
+        res = await self.__connection.direct_query('GET', ['_session'])
+        return SessionResult(**res)
 
     async def authenticate(self):
         """\
@@ -23,14 +42,6 @@ class Session:
 
         data = {'name': self.__username, 'password': self.__password}
         return await self.__connection.direct_query('POST', ['_session'], data=data)
-
-    async def get(self):
-        """\
-        Get current session
-
-        https://docs.couchdb.org/en/latest/api/server/authn.html#get--_session
-        """
-        return await self.__connection.direct_query('GET', ['_session'])
 
     async def delete(self):
         """\
