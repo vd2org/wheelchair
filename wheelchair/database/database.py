@@ -9,18 +9,7 @@ from .attachments import Attachments
 from .ddoc import DesignDocumentsProxy
 
 if TYPE_CHECKING:
-    from .connection import Connection
-
-
-class DatabaseProxy:
-    def __init__(self, connection: 'Connection'):
-        self.__connection = connection
-
-    def __call__(self, name: str):
-        return Database(self.__connection, name)
-
-    def __getattr__(self, attr) -> 'Database':
-        return Database(self.__connection, attr)
+    from ..connection import Connection
 
 
 class Database:
@@ -48,7 +37,7 @@ class Database:
 
     async def db_delete(self):
         """
-        Removes new database
+        Removes database
         """
 
         return await self.__connection.query('DELETE', [self.__name])

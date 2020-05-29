@@ -6,7 +6,7 @@
 import typing
 
 if typing.TYPE_CHECKING:
-    from .connection import Connection
+    from ..connection import Connection
     from .database import Database
     from .ddoc import DesignDocument
 

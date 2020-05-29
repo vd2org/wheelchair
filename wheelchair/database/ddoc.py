@@ -8,7 +8,7 @@ import typing
 from .view import ViewProxy
 
 if typing.TYPE_CHECKING:
-    from .connection import Connection
+    from ..connection import Connection
     from .database import Database
 
 

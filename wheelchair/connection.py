@@ -10,13 +10,13 @@ from urllib.parse import urlsplit, urljoin, quote, urlencode
 
 from aiohttp import ClientSession, ClientResponse
 
-from .active_tasks import ActiveTasks
 from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
+from .node import NodeProxy
 from .server import Server
 from .session import Session
 
-default_logger = logging.getLogger('wheelchair.connection')
+default_logger = logging.getLogger('wheelchair')
 
 
 class Connection:
@@ -141,8 +141,8 @@ class Connection:
         return Server(self)
 
     @property
-    def active_tasks(self) -> ActiveTasks:
-        return ActiveTasks(self)
+    def node(self) -> NodeProxy:
+        return NodeProxy(self)
 
     @property
     def session(self) -> Session:
@@ -151,9 +151,6 @@ class Connection:
     @property
     def db(self) -> DatabaseProxy:
         return DatabaseProxy(self)
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}('{self.__url}')"
 
     async def shutdown_cleanup(self):
         if self.__asyncio_session is None:
