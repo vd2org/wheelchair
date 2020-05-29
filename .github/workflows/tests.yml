@@ -2,8 +2,8 @@ name: TEST
 
 on:
   push:
-    tags:
-      - !v*
+    branches:
+      - '*'
   pull_request:
     ~
 
