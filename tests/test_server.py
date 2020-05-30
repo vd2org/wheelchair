@@ -2,6 +2,7 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
+
 import pytest
 
 from wheelchair import Connection

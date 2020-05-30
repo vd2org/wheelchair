@@ -2,6 +2,7 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
+
 import pytest
 
 from wheelchair import Connection
@@ -20,8 +21,8 @@ async def test_session(admin_connection: Connection):
 async def test_authenticate(admin_connection: Connection):
     res = await admin_connection.session.authenticate()
 
-    assert res['name'] == 'admin'
-    assert isinstance(res['roles'], list)
+    assert res.name == 'admin'
+    assert isinstance(res.roles, list)
 
 
 @pytest.mark.asyncio
