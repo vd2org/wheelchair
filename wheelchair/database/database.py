@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from .attachments import Attachments
+from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
 from .doc import Documents
 
@@ -60,13 +61,14 @@ class Database:
 
     # async def insert(self, doc: dict):
     #     return await self.__connection.query('POST', [self.__database.name], data=doc)
-    #
-    # async def bulk_insert(self, doc: dict):
-    #     return await self.__connection.query('POST', [self.__database.name, '_bulk_docs'], data=doc)
 
     @property
     def doc(self) -> Documents:
         return Documents(self)
+
+    @property
+    def bulk(self) -> Bulk:
+        return Bulk(self)
 
     @property
     def ddoc(self) -> DesignDocumentsProxy:
