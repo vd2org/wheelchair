@@ -3,8 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from dataclasses import dataclass
-from typing import List
+from typing import List, NamedTuple
 from typing import TYPE_CHECKING
 
 from .utils import Query
@@ -14,15 +13,13 @@ if TYPE_CHECKING:
     pass
 
 
-@dataclass(frozen=True)
-class SessionGetResult:
+class SessionGetResult(NamedTuple):
     ok: bool
     userCtx: dict
     info: dict
 
 
-@dataclass(frozen=True)
-class SessionAuthResult:
+class SessionAuthResult(NamedTuple):
     ok: bool
     name: str
     roles: List[str]

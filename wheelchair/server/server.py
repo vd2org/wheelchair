@@ -3,14 +3,12 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from dataclasses import dataclass
-from typing import Optional, Union, List
+from typing import Optional, Union, List, NamedTuple
 
 from ..utils import SimpleScope
 
 
-@dataclass(frozen=True)
-class ActiveTasksResult:
+class ActiveTasksResult(NamedTuple):
     changes_done: int
     database: str
     pid: str
