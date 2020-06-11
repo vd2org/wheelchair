@@ -7,7 +7,6 @@ from secrets import token_hex
 
 import pytest
 
-from wheelchair import NotFoundError
 from wheelchair.database.database import Database
 
 
