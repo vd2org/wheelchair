@@ -85,7 +85,8 @@ class Connection:
     async def direct_query(self, method: str,
                            path: List[str],
                            params: Optional[dict] = None,
-                           data: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
+                           data: Optional[dict] = None,
+                           headers: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
 
         path = "/".join([quote(i, safe='') for i in path])
 
@@ -100,7 +101,7 @@ class Connection:
 
         self.__logger.debug("Querying CouchDB: %s %s", method, full_url)
 
-        req = await self.__asyncio_session.request(method, full_url, json=data)
+        req = await self.__asyncio_session.request(method, full_url, json=data, headers=headers)
 
         if not req.content_type == 'application/json':
             return req
@@ -114,8 +115,10 @@ class Connection:
 
     async def query(self, method: str,
                     path: List[str],
+                    *,
                     params: Optional[dict] = None,
-                    data: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
+                    data: Optional[dict] = None,
+                    headers: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
         """
         Performs request to CouchDB
 
@@ -123,11 +126,12 @@ class Connection:
         :param path: Request path
         :param params: Query parameters
         :param data: Data
+        :param headers: Request headers
         :return: Result of the request
         """
 
         try:
-            return await self.direct_query(method, path, params, data)
+            return await self.direct_query(method, path, params, data, headers)
         except UnauthorizedError:
             pass
 

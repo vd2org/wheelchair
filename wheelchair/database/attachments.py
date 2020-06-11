@@ -3,17 +3,13 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-import typing
+from typing import TYPE_CHECKING
 
-if typing.TYPE_CHECKING:
-    from ..connection import Connection
+if TYPE_CHECKING:
     from .database import Database
 
 
 class Attachments:
-    def __init__(self, connection: 'Connection', database: 'Database'):
-        self.__connection = connection
+    def __init__(self, database: 'Database'):
+        self.__connection = database.connection
         self.__database = database
-
-    async def get(self, _id: str, attachment: str):
-        return await self.__connection.query('GET', [self.__database.name, _id, attachment])

@@ -2,4 +2,4 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
-from .database_proxy import DatabaseProxy
+from .database import DatabaseProxy

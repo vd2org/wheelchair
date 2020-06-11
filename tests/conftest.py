@@ -4,8 +4,10 @@
 
 
 import pytest
+from secrets import token_hex
 
 from wheelchair import Connection
+from wheelchair.database.database import Database
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -17,3 +19,14 @@ async def admin_connection() -> Connection:
     yield connection
 
     await connection.shutdown_cleanup()
+
+
+@pytest.fixture
+async def new_database(admin_connection: Connection) -> Database:
+    db = admin_connection.db('test_' + token_hex())
+
+    await db.create()
+
+    yield db
+
+    await db.delete()
