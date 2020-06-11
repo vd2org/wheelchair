@@ -44,4 +44,4 @@ class View:
         """
 
         path = [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
-        return await self.__connection.query('GET', path, kwargs)
+        return await self.__connection.query('GET', path, params=kwargs)
