@@ -3,5 +3,5 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from .query import Query
-from .simple_scope import SimpleScope
+from .auth import Auth
+from .cookie_auth import CookieAuth
