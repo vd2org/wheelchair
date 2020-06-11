@@ -3,6 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
+from typing import Optional
 from typing import TYPE_CHECKING
 
 from .attachments import Attachments
@@ -40,27 +41,40 @@ class Database:
 
     async def __call__(self) -> dict:
         """\
-        Get information about database
+        Get information about database.
+
+        https://docs.couchdb.org/en/stable/api/database/common.html#get--db
         """
 
         return await self.__connection.query('GET', [self.__name])
 
     async def create(self):
         """\
-        Creates new database
+        Creates new database.
+
+        https://docs.couchdb.org/en/stable/api/database/common.html#put--db
         """
 
         return await self.__connection.query('PUT', [self.__name])
 
     async def delete(self):
         """
-        Removes database
+        Removes database.
+
+        https://docs.couchdb.org/en/stable/api/database/common.html#delete--db
         """
 
         return await self.__connection.query('DELETE', [self.__name])
 
-    # async def insert(self, doc: dict):
-    #     return await self.__connection.query('POST', [self.__database.name], data=doc)
+    async def insert(self, doc: dict, batch: Optional[bool] = None) -> dict:
+        """
+        Inserts new document into database.
+
+        https://docs.couchdb.org/en/stable/api/database/common.html#post--db
+        """
+
+        params = dict(batch="ok" if batch else None)
+        return await self.__connection.query('POST', [self.__name], params=params, data=doc)
 
     @property
     def doc(self) -> Documents:
