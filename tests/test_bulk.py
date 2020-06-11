@@ -44,8 +44,6 @@ async def test_bulk(new_database: Database):
 
     res = await new_database.bulk.get(all_get)
 
-    print(res)
-
     assert res[0]['id'] == doc0['_id']
     assert res[0]['docs'][0]['ok']['test_data'] == doc0['test_data']
     assert res[1]['id'] == doc1['_id']
