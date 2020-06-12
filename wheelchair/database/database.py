@@ -102,6 +102,16 @@ class Database:
     def shards(self) -> Shards:
         return Shards(self)
 
+    async def compact(self) -> bool:
+        """
+        Compacts the entire database.
+
+        https://docs.couchdb.org/en/stable/api/database/compact.html#post--db-_compact
+        """
+
+        res = await self.__connection.query('POST', [self.name, '_compact'])
+        return res['ok']
+
     async def view_cleanup(self) -> bool:
         """\
         Removes unused view indexes.
