@@ -19,7 +19,7 @@ class Shards:
         return self.__database
 
     async def __call__(self) -> dict:
-        """
+        """\
         Returns list of the database shars.
 
         https://docs.couchdb.org/en/stable/api/database/shard.html#get--db-_shards
@@ -30,7 +30,7 @@ class Shards:
         return res['shards']
 
     async def doc(self, _id: str) -> dict:
-        """
+        """\
         Returns information about specific document's shard.
 
         https://docs.couchdb.org/en/stable/api/database/shard.html#get--db-_shards-docid
@@ -41,7 +41,7 @@ class Shards:
         return await self.__connection.query('GET', path)
 
     async def sync(self) -> bool:
-        """
+        """\
         Forses start shards synchronization for given database.
 
         https://docs.couchdb.org/en/stable/api/database/shard.html#post--db-_sync_shards

@@ -83,8 +83,9 @@ class Database:
         """\
         Returns View scope for all_docs of the database.
 
-        http://localhost:5984/_utils/docs/api/database/bulk-api.html#get--db-_all_docs
-        http://localhost:5984/_utils/docs/api/database/bulk-api.html#post--db-_all_docs
+        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#get--db-_all_docs
+        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs
+        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs-queries
         """
         return View(self, None, '_all_docs')
 

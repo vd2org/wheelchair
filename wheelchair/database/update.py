@@ -37,7 +37,7 @@ class Update:
         return self.__ddoc
 
     async def __call__(self, _id: Optional[str], data: Any) -> dict:
-        """
+        """\
         Executes an update function.
 
         https://docs.couchdb.org/en/stable/api/ddoc/render.html#post--db-_design-ddoc-_update-func

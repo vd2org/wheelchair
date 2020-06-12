@@ -55,7 +55,7 @@ class Search:
                        ranges: Optional[dict] = None,
                        sort: Optional[dict] = None,
                        stale: Optional[bool] = None) -> dict:
-        """
+        """\
         Executes a search function.
 
         https://docs.couchdb.org/en/stable/api/ddoc/search.html#get--db-_design-ddoc-_search-index
@@ -86,7 +86,7 @@ class Search:
         return await self.__connection.query('GET', path, params=params)
 
     async def info(self) -> dict:
-        """
+        """\
         Get a search index info.
 
         https://docs.couchdb.org/en/stable/api/ddoc/search.html#get--db-_design-ddoc-_search_info-index

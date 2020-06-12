@@ -20,14 +20,11 @@ class Bulk:
         return self.__database
 
     async def get(self, docs: List[dict], revs: Optional[bool] = None) -> List[dict]:
-        """
+        """\
         Performs bulk get query.
 
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_bulk_get
         """
-
-        # async def bulk_insert(self, doc: dict):
-        #     return await self.__connection.query('POST', [self.__database.name, '_bulk_docs'], data=doc)
 
         params = dict(revs=revs)
         data = dict(docs=docs)

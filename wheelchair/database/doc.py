@@ -36,7 +36,7 @@ class Document:
                        open_revs: Optional[List[str]] = None,
                        revs: Optional[bool] = None,
                        revs_info: Optional[bool] = None) -> dict:
-        """
+        """\
         Returns document by the specified _id.
 
         https://docs.couchdb.org/en/stable/api/document/common.html#get--db-docid
@@ -62,11 +62,10 @@ class Document:
                   rev: Optional[str] = None,
                   batch: Optional[bool] = None,
                   new_edits: Optional[bool] = True) -> dict:
-        """
+        """\
         Put new document or update existing document.
 
         https://docs.couchdb.org/en/stable/api/document/common.html#put--db-docid
-
         """
 
         params = dict(
@@ -78,7 +77,7 @@ class Document:
         return await self.__connection.query('PUT', self.__get_path(_id), params=params, data=doc)
 
     async def delete(self, _id: str, rev: str, *, batch: Optional[bool] = None) -> dict:
-        """
+        """\
         Deletes existing document.
 
         https://docs.couchdb.org/en/stable/api/document/common.html#delete--db-docid
@@ -95,7 +94,7 @@ class Document:
                    rev: Optional[str] = None,
                    dst_rev: Optional[str] = None,
                    batch: Optional[bool] = None) -> dict:
-        """
+        """\
         Deletes existing document.
 
         https://docs.couchdb.org/en/stable/api/document/common.html#copy--db-docid
