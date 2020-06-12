@@ -11,6 +11,7 @@ from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
 from .doc import Document
 from .shards import Shards
+from .view import View
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -78,8 +79,14 @@ class Database:
         return await self.__connection.query('POST', [self.__name], params=params, data=doc)
 
     @property
-    def doc(self) -> Document:
-        return Document(self)
+    def all(self) -> View:
+        """\
+        Returns View scope for all_docs of the database.
+
+        http://localhost:5984/_utils/docs/api/database/bulk-api.html#get--db-_all_docs
+        http://localhost:5984/_utils/docs/api/database/bulk-api.html#post--db-_all_docs
+        """
+        return View(self, None, '_all_docs')
 
     @property
     def bulk(self) -> Bulk:
@@ -96,6 +103,10 @@ class Database:
     @property
     def attachments(self) -> Attachments:
         return Attachments(self)
+
+    @property
+    def doc(self) -> Document:
+        return Document(self)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self.__connection)}, '{self.__name}')"

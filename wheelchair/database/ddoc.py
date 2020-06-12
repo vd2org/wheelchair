@@ -26,6 +26,15 @@ class DesignDocumentsProxy:
 
     @property
     def doc(self) -> Document:
+        """\
+        Returns Document's scope for design documents.
+
+        http://localhost:5984/_utils/docs/api/database/bulk-api.html#get--db-_design_docs
+        http://localhost:5984/_utils/docs/api/database/bulk-api.html#post--db-_design_docs
+        http://localhost:5984/_utils/docs/api/database/bulk-api.html#post--db-_all_docs-queries
+
+        """
+
         return Document(self.__database, doc_type='_design')
 
 

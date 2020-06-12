@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .ddoc import DesignDocument
+    from .database import Database
 
 
 class StaleOptions(str, Enum):
@@ -48,16 +49,16 @@ class ViewProxy:
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'View':
-        return View(self.__ddoc, name)
+        return View(self.__ddoc.database, self.__ddoc, name)
 
     def __getattr__(self, attr: str) -> 'View':
-        return View(self.__ddoc, attr)
+        return View(self.__ddoc.database, self.__ddoc, attr)
 
 
 class View:
-    def __init__(self, ddoc: 'DesignDocument', name: str):
-        self.__connection = ddoc.database.connection
-        self.__database = ddoc.database
+    def __init__(self, database: 'Database', ddoc: Optional['DesignDocument'], name: str):
+        self.__connection = database.connection
+        self.__database = database
         self.__ddoc = ddoc
         self.__name = name
 
@@ -66,7 +67,11 @@ class View:
         return self.__name
 
     @property
-    def ddoc(self) -> 'DesignDocument':
+    def ddoc(self) -> Optional['DesignDocument']:
+        return self.__ddoc
+
+    @property
+    def database(self) -> 'DesignDocument':
         return self.__ddoc
 
     async def __call__(self, *,
@@ -91,22 +96,19 @@ class View:
                        start_key: Optional[Any] = None,
                        start_key_doc_id: Optional[str] = None,
                        update: Optional[str] = None,
-                       update_seq: Optional[bool] = None) -> dict:
-        """
+                       update_seq: Optional[bool] = None,
+                       _use_get: bool = False) -> dict:
+        """\
         Executes a view function.
 
         https://docs.couchdb.org/en/stable/api/ddoc/views.html#get--db-_design-ddoc-_view-view
+        https://docs.couchdb.org/en/stable/api/ddoc/views.html#post--db-_design-ddoc-_view-view
         """
-
-        if stale is True:
-            stale = StaleOptions.ok
-        elif stale is False:
-            stale = StaleOptions.false
 
         params = dict(
             conflicts=conflicts,
             descending=descending,
-            end_key=json.dumps(end_key),
+            end_key=json.dumps(end_key) if _use_get else end_key,
             end_key_doc_id=end_key_doc_id,
             group=group,
             group_level=group_level,
@@ -114,25 +116,27 @@ class View:
             attachments=attachments,
             att_encoding_info=att_encoding_info,
             inclusive_end=inclusive_end,
-            key=json.dumps(key),
+            key=json.dumps(key) if _use_get else key,
             keys=keys,
             limit=limit,
             reduce=reduce,
             skip=skip,
             sorted=sorted,
             stable=stable,
-            stale=stale,
-            start_key=json.dumps(start_key),
+            stale=self.__format_stale(stale),
+            start_key=json.dumps(start_key) if _use_get else start_key,
             start_key_doc_id=start_key_doc_id,
             update=update,
             update_seq=update_seq,
         )
 
-        path = [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
-        return await self.__connection.query('GET', path, params=params)
+        if _use_get:
+            return await self.__connection.query('GET', self.__get_path(), params=params)
+
+        return await self.__connection.query('POST', self.__get_path(), data=params)
 
     async def queries(self, *queries: ViewQuery) -> List[dict]:
-        """
+        """\
         Executes a view function.
 
         https://docs.couchdb.org/en/stable/api/ddoc/views.html#post--db-_design-ddoc-_view-view-queries
@@ -141,12 +145,24 @@ class View:
         queries = [dict(q._asdict()) for q in queries]
 
         for q in queries:
-            if q.stale == True:
-                q.stale = StaleOptions.ok
-            elif q.stale == False:
-                q.stale = StaleOptions.false
+            q.stale = self.__format_stale(q.stale)
 
         data = dict(queries=queries)
+        path = self.__get_path() + ['queries']
 
-        path = [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name, 'queries']
         return await self.__connection.query('POST', path, data=data)
+
+    def __get_path(self) -> List[str]:
+        if self.__ddoc:
+            return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
+
+        return [self.__database.name, self.__name]
+
+    @staticmethod
+    def __format_stale(stale: Optional[Union[bool, StaleOptions]]) -> StaleOptions:
+        if stale is True:
+            return StaleOptions.ok
+        if stale is False:
+            return StaleOptions.false
+
+        return stale
