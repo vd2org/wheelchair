@@ -14,6 +14,10 @@ class Shards:
         self.__connection = database.connection
         self.__database = database
 
+    @property
+    def database(self) -> 'Database':
+        return self.__database
+
     async def __call__(self) -> dict:
         """
         Returns list of the database shars.

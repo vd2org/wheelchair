@@ -11,20 +11,18 @@ from .update import UpdateProxy
 from .view import ViewProxy
 
 if typing.TYPE_CHECKING:
-    from ..connection import Connection
     from .database import Database
 
 
 class DesignDocumentsProxy:
-    def __init__(self, connection: 'Connection', database: 'Database'):
-        self.__connection = connection
+    def __init__(self, database: 'Database'):
         self.__database = database
 
     def __call__(self, name: str) -> 'DesignDocument':
-        return DesignDocument(self.__connection, self.__database, name)
+        return DesignDocument(self.__database, name)
 
     def __getattr__(self, attr: str) -> 'DesignDocument':
-        return DesignDocument(self.__connection, self.__database, attr)
+        return DesignDocument(self.__database, attr)
 
     @property
     def doc(self) -> Document:
@@ -32,14 +30,18 @@ class DesignDocumentsProxy:
 
 
 class DesignDocument:
-    def __init__(self, connection: 'Connection', database: 'Database', name: str):
-        self.__connection = connection
+    def __init__(self, database: 'Database', name: str):
+        self.__connection = database.connection
         self.__database = database
         self.__name = name
 
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def database(self) -> 'Database':
+        return self.__database
 
     async def info(self) -> dict:
         """
@@ -53,12 +55,12 @@ class DesignDocument:
 
     @property
     def view(self) -> ViewProxy:
-        return ViewProxy(self.__connection, self.__database, self)
+        return ViewProxy(self)
 
     @property
     def search(self) -> SearchProxy:
-        return SearchProxy(self.__connection, self.__database, self)
+        return SearchProxy(self)
 
     @property
     def update(self) -> UpdateProxy:
-        return UpdateProxy(self.__connection, self.__database, self)
+        return UpdateProxy(self)

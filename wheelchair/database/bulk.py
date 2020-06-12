@@ -15,6 +15,10 @@ class Bulk:
         self.__connection = database.connection
         self.__database = database
 
+    @property
+    def database(self) -> 'Database':
+        return self.__database
+
     async def get(self, docs: List[dict], revs: Optional[bool] = None) -> List[dict]:
         """
         Performs bulk get query.

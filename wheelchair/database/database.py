@@ -87,7 +87,7 @@ class Database:
 
     @property
     def ddoc(self) -> DesignDocumentsProxy:
-        return DesignDocumentsProxy(self.__connection, self)
+        return DesignDocumentsProxy(self)
 
     @property
     def shards(self) -> Shards:

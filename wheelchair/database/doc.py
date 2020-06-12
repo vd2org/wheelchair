@@ -16,6 +16,14 @@ class Document:
         self.__database = database
         self.__doc_type = doc_type
 
+    @property
+    def doc_type(self) -> str:
+        return self.__doc_type
+
+    @property
+    def database(self) -> 'Database':
+        return self.__database
+
     async def __call__(self, _id: str, rev: Optional[str] = None, *,
                        attachments: Optional[bool] = None,
                        att_encoding_info: Optional[bool] = None,

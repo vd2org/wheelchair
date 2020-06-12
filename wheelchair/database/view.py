@@ -9,8 +9,6 @@ from typing import Any, Optional, Union, List, NamedTuple
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..connection import Connection
-    from .database import Database
     from .ddoc import DesignDocument
 
 
@@ -46,28 +44,30 @@ class ViewQuery(NamedTuple):
 
 
 class ViewProxy:
-    def __init__(self, connection: 'Connection', database: 'Database', ddoc: 'DesignDocument'):
-        self.__connection = connection
-        self.__database = database
+    def __init__(self, ddoc: 'DesignDocument'):
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'View':
-        return View(self.__connection, self.__database, self.__ddoc, name)
+        return View(self.__ddoc, name)
 
     def __getattr__(self, attr: str) -> 'View':
-        return View(self.__connection, self.__database, self.__ddoc, attr)
+        return View(self.__ddoc, attr)
 
 
 class View:
-    def __init__(self, connection: 'Connection', database: 'Database', ddoc: 'DesignDocument', name: str):
-        self.__connection = connection
-        self.__database = database
+    def __init__(self, ddoc: 'DesignDocument', name: str):
+        self.__connection = ddoc.database.connection
+        self.__database = ddoc.database
         self.__ddoc = ddoc
         self.__name = name
 
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def ddoc(self) -> 'DesignDocument':
+        return self.__ddoc
 
     async def __call__(self, *,
                        conflicts: Optional[bool] = None,

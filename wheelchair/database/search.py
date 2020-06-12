@@ -7,34 +7,34 @@ from typing import Optional, List
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..connection import Connection
-    from .database import Database
     from .ddoc import DesignDocument
 
 
 class SearchProxy:
-    def __init__(self, connection: 'Connection', database: 'Database', ddoc: 'DesignDocument'):
-        self.__connection = connection
-        self.__database = database
+    def __init__(self, ddoc: 'DesignDocument'):
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'Search':
-        return Search(self.__connection, self.__database, self.__ddoc, name)
+        return Search(self.__ddoc, name)
 
     def __getattr__(self, attr: str) -> 'Search':
-        return Search(self.__connection, self.__database, self.__ddoc, attr)
+        return Search(self.__ddoc, attr)
 
 
 class Search:
-    def __init__(self, connection: 'Connection', database: 'Database', ddoc: 'DesignDocument', name: str):
-        self.__connection = connection
-        self.__database = database
+    def __init__(self, ddoc: 'DesignDocument', name: str):
+        self.__connection = ddoc.database.connection
+        self.__database = ddoc.database
         self.__ddoc = ddoc
         self.__name = name
 
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def ddoc(self) -> 'DesignDocument':
+        return self.__ddoc
 
     async def __call__(self, *,
                        bookmark: Optional[str] = None,
