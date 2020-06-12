@@ -10,6 +10,7 @@ from .attachments import Attachments
 from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
 from .doc import Document
+from .security import Security
 from .shards import Shards
 from .view import View
 
@@ -111,6 +112,10 @@ class Database:
 
         res = await self.__connection.query('POST', [self.__name, '_view_cleanup'])
         return res['ok']
+
+    @property
+    def security(self) -> Security:
+        return Security(self)
 
     @property
     def attachments(self) -> Attachments:
