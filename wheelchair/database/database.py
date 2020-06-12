@@ -67,7 +67,7 @@ class Database:
 
         return await self.__connection.query('DELETE', [self.__name])
 
-    async def insert(self, doc: dict, batch: Optional[bool] = None) -> dict:
+    async def post(self, doc: dict, batch: Optional[bool] = None) -> dict:
         """
         Inserts new document into database.
 
