@@ -162,6 +162,3 @@ class Database:
     @property
     def doc(self) -> Document:
         return Document(self)
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({repr(self.__connection)}, '{self.__name}')"
