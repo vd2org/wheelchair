@@ -102,8 +102,7 @@ class Database:
     def shards(self) -> Shards:
         return Shards(self)
 
-    @property
-    def view_cleanup(self) -> bool:
+    async def view_cleanup(self) -> bool:
         """\
         Removes unused view indexes.
 
