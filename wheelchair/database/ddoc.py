@@ -61,6 +61,17 @@ class DesignDocument:
         path = [self.__database.name, '_design', self.__name, '_info']
         return await self.__connection.query('GET', path)
 
+    async def compact(self) -> bool:
+        """
+        Compacts view indexes.
+
+        https://docs.couchdb.org/en/stable/api/database/compact.html#post--db-_compact-ddoc
+        """
+
+        path = [self.__database.name, '_compact', self.__name]
+        res = await self.__connection.query('POST', path)
+        return res['ok']
+
     @property
     def view(self) -> ViewProxy:
         return ViewProxy(self)
