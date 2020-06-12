@@ -141,6 +141,21 @@ class Database:
         return res['missing_revs']
 
     @property
+    def revs_limit(self):
+        # TODO: implement me!
+        raise NotImplementedError
+
+    def revs_diff(self, docs: Dict[List[str]]) -> dict:
+        """\
+        Given a set of document/revision IDs, returns the subset
+        of those that do not correspond to revisions stored in the database.
+
+        https://docs.couchdb.org/en/stable/api/database/misc.html#post--db-_revs_diff
+        """
+
+        return await self.__connection.query('POST', [self.__name, '_revs_diff'], data=docs)
+
+    @property
     def attachments(self) -> Attachments:
         return Attachments(self)
 
