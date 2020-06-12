@@ -10,6 +10,7 @@ from .attachments import Attachments
 from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
 from .doc import Document
+from .shards import Shards
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -87,6 +88,10 @@ class Database:
     @property
     def ddoc(self) -> DesignDocumentsProxy:
         return DesignDocumentsProxy(self.__connection, self)
+
+    @property
+    def shards(self) -> Shards:
+        return Shards(self)
 
     @property
     def attachments(self) -> Attachments:
