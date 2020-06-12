@@ -126,6 +126,21 @@ class Database:
         return await self.__connection.query('POST', [self.__name, '_purge'], data=docs)
 
     @property
+    def purged_infos_limit(self):
+        # TODO: implement me!
+        raise NotImplementedError
+
+    def missing_revs(self, docs: Dict[List[str]]) -> dict:
+        """\
+        With given a list of document revisions, returns the document revisions that do not exist in the database.
+
+        https://docs.couchdb.org/en/stable/api/database/misc.html#post--db-_missing_revs
+        """
+
+        res = await self.__connection.query('POST', [self.__name, '_purge'], data=docs)
+        return res['missing_revs']
+
+    @property
     def attachments(self) -> Attachments:
         return Attachments(self)
 
