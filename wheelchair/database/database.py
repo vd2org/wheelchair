@@ -91,12 +91,25 @@ class Database:
         return View(self, None, '_all_docs')
 
     @property
+    def ddoc(self) -> DesignDocumentsProxy:
+        return DesignDocumentsProxy(self)
+
+    @property
     def bulk(self) -> Bulk:
         return Bulk(self)
 
+    async def find(self):
+        # TODO: implement me!
+        raise NotImplementedError
+
     @property
-    def ddoc(self) -> DesignDocumentsProxy:
-        return DesignDocumentsProxy(self)
+    def index(self):
+        # TODO: implement me!
+        raise NotImplementedError
+
+    async def explain(self):
+        # TODO: implement me!
+        raise NotImplementedError
 
     @property
     def shards(self) -> Shards:
