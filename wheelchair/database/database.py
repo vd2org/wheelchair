@@ -3,7 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from typing import Optional
+from typing import Optional, Dict, List
 from typing import TYPE_CHECKING
 
 from .attachments import Attachments
@@ -115,6 +115,15 @@ class Database:
     @property
     def security(self) -> Security:
         return Security(self)
+
+    def purge(self, docs: Dict[List[str]]) -> dict:
+        """\
+        Removes old document's revisions.
+
+        https://docs.couchdb.org/en/stable/api/database/misc.html#post--db-_purge
+        """
+
+        return await self.__connection.query('POST', [self.__name, '_purge'], data=docs)
 
     @property
     def attachments(self) -> Attachments:
