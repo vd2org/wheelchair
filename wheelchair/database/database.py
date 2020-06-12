@@ -102,6 +102,17 @@ class Database:
         return Shards(self)
 
     @property
+    def view_cleanup(self) -> View:
+        """\
+        Removes unused view indexes.
+
+        https://docs.couchdb.org/en/stable/api/database/compact.html#post--db-_view_cleanup
+        """
+
+        res = await self.__connection.query('POST', [self.__name, '_view_cleanup'])
+        return res['ok']
+
+    @property
     def attachments(self) -> Attachments:
         return Attachments(self)
 
