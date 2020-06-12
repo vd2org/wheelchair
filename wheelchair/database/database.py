@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from .attachments import Attachments
 from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
-from .doc import Documents
+from .doc import Document
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -77,8 +77,8 @@ class Database:
         return await self.__connection.query('POST', [self.__name], params=params, data=doc)
 
     @property
-    def doc(self) -> Documents:
-        return Documents(self)
+    def doc(self) -> Document:
+        return Document(self)
 
     @property
     def bulk(self) -> Bulk:

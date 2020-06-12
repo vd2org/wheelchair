@@ -10,12 +10,13 @@ if TYPE_CHECKING:
     from .database import Database
 
 
-class Documents:
-    def __init__(self, database: 'Database'):
+class Document:
+    def __init__(self, database: 'Database', *, doc_type: Optional[str] = None):
         self.__connection = database.connection
         self.__database = database
+        self.__doc_type = doc_type
 
-    async def __call__(self, _id: str, _rev: Optional[str] = None, *,
+    async def __call__(self, _id: str, rev: Optional[str] = None, *,
                        attachments: Optional[bool] = None,
                        att_encoding_info: Optional[bool] = None,
                        atts_since: Optional[List[str]] = None,
@@ -47,7 +48,7 @@ class Documents:
             revs_info=revs_info,
         )
 
-        return await self.__connection.query('GET', [self.__database.name, _id], params=params)
+        return await self.__connection.query('GET', self.__get_path(_id), params=params)
 
     async def put(self, _id: str, doc: dict, *,
                   rev: Optional[str] = None,
@@ -66,9 +67,9 @@ class Documents:
             new_edits=new_edits
         )
 
-        return await self.__connection.query('PUT', [self.__database.name, _id], params=params, data=doc)
+        return await self.__connection.query('PUT', self.__get_path(_id), params=params, data=doc)
 
-    async def delete(self, _id: str, _rev: str, *, batch: Optional[bool] = None) -> dict:
+    async def delete(self, _id: str, rev: str, *, batch: Optional[bool] = None) -> dict:
         """
         Deletes existing document.
 
@@ -76,14 +77,14 @@ class Documents:
         """
 
         params = dict(
-            rev=_rev,
+            rev=rev,
             batch="ok" if batch else None,
         )
 
-        return await self.__connection.query('DELETE', [self.__database.name, _id], params=params)
+        return await self.__connection.query('DELETE', self.__get_path(_id), params=params)
 
     async def copy(self, _id: str, dst_id: str, *,
-                   _rev: Optional[str] = None,
+                   rev: Optional[str] = None,
                    dst_rev: Optional[str] = None,
                    batch: Optional[bool] = None) -> dict:
         """
@@ -97,8 +98,14 @@ class Documents:
         )
 
         params = dict(
-            rev=_rev,
+            rev=rev,
             batch="ok" if batch else None,
         )
 
-        return await self.__connection.query('COPY', [self.__database.name, _id], params=params, headers=headers)
+        return await self.__connection.query('COPY', self.__get_path(_id), params=params, headers=headers)
+
+    def __get_path(self, _id: str) -> List[str]:
+        if self.__doc_type:
+            return [self.__database.name, self.__doc_type, _id]
+
+        return [self.__database.name, _id]
