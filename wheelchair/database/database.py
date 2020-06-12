@@ -70,7 +70,7 @@ class Database:
         return await self.__connection.query('DELETE', [self.__name])
 
     async def post(self, doc: dict, batch: Optional[bool] = None) -> dict:
-        """
+        """\
         Inserts new document into database.
 
         https://docs.couchdb.org/en/stable/api/database/common.html#post--db
@@ -103,7 +103,7 @@ class Database:
         return Shards(self)
 
     async def compact(self) -> bool:
-        """
+        """\
         Compacts the entire database.
 
         https://docs.couchdb.org/en/stable/api/database/compact.html#post--db-_compact

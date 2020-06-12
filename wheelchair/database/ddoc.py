@@ -52,7 +52,7 @@ class DesignDocument:
         return self.__database
 
     async def info(self) -> dict:
-        """
+        """\
         Returns information about design document.
 
         https://docs.couchdb.org/en/stable/api/ddoc/common.html#get--db-_design-ddoc-_info
@@ -62,8 +62,8 @@ class DesignDocument:
         return await self.__connection.query('GET', path)
 
     async def compact(self) -> bool:
-        """
-        Compacts view indexes.
+        """\
+        Compacts view indexes of the specific design document.
 
         https://docs.couchdb.org/en/stable/api/database/compact.html#post--db-_compact-ddoc
         """
