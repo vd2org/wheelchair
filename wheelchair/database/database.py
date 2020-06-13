@@ -10,6 +10,7 @@ from .attachments import Attachments
 from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
 from .doc import Document
+from .index import Index
 from .security import Security
 from .shards import Shards
 from .view import AllDocsView
@@ -103,9 +104,8 @@ class Database:
         raise NotImplementedError
 
     @property
-    def index(self):
-        # TODO: implement me!
-        raise NotImplementedError
+    def index(self) -> Index:
+        return Index(self)
 
     async def explain(self):
         # TODO: implement me!
