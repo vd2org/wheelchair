@@ -41,7 +41,7 @@ class Index:
                    selector: Optional[dict] = None,
                    partitioned: Optional[bool] = None) -> dict:
         """\
-        Create a new mango index.
+        Creates a new mango index.
 
         https://docs.couchdb.org/en/stable/api/database/find.html#post--db-_index
         """
@@ -56,3 +56,14 @@ class Index:
         )
 
         return await self.__connection.query('POST', [self.__database.name, '_index'], data=data)
+
+    async def delete(self, ddoc: str, name: str) -> bool:
+        """\
+        Creates the mango index.
+
+        https://docs.couchdb.org/en/stable/api/database/find.html#delete--db-_index-designdoc-json-name
+        """
+
+        path = [self.__database.name, '_index', ddoc, 'json', name]
+        res = await self.__connection.query('DELETE', path)
+        return res['ok']
