@@ -89,6 +89,7 @@ class Database:
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs-queries
         """
+
         return AllDocsView(self)
 
     @property
@@ -206,6 +207,7 @@ class Database:
         https://docs.couchdb.org/en/stable/api/local.html#get--db-_local_docs
         https://docs.couchdb.org/en/stable/api/local.html#post--db-_local_docs
         """
+
         return LocalDocsView(self)
 
     @property
@@ -218,4 +220,5 @@ class Database:
         https://docs.couchdb.org/en/stable/api/local.html#delete--db-_local-docid
         https://docs.couchdb.org/en/stable/api/local.html#copy--db-_local-docid
         """
+
         return LocalDocument(self)
