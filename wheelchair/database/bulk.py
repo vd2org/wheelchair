@@ -36,7 +36,6 @@ class Bulk:
         Performs bulk insert/update/delete query.
 
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_bulk_docs
-
         """
 
         params = dict(new_edits=new_edits)
