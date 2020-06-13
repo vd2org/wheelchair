@@ -81,7 +81,7 @@ class Database:
         return await self.__connection.query('POST', [self.__name], params=params, data=doc)
 
     @property
-    def all(self) -> AllDocsView:
+    def all_docs(self) -> AllDocsView:
         """\
         Returns View scope for all_docs of the database.
 
