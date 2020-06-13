@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING
 from .attachments import Attachments
 from .bulk import Bulk
 from .ddoc import DesignDocumentsProxy
-from .doc import Document
+from .doc import Document, LocalDocument
 from .index import Index
 from .security import Security
 from .shards import Shards
-from .view import AllDocsView
+from .view import AllDocsView, LocalDocsView
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -185,3 +185,25 @@ class Database:
     @property
     def doc(self) -> Document:
         return Document(self)
+
+    @property
+    def local_docs(self) -> LocalDocsView:
+        """\
+        Returns View scope for local_docs of the database.
+
+        https://docs.couchdb.org/en/stable/api/local.html#get--db-_local_docs
+        https://docs.couchdb.org/en/stable/api/local.html#post--db-_local_docs
+        """
+        return LocalDocsView(self)
+
+    @property
+    def local(self) -> LocalDocument:
+        """\
+        Returns Document scope for local documents.
+
+        https://docs.couchdb.org/en/stable/api/local.html#get--db-_local-docid
+        https://docs.couchdb.org/en/stable/api/local.html#put--db-_local-docid
+        https://docs.couchdb.org/en/stable/api/local.html#delete--db-_local-docid
+        https://docs.couchdb.org/en/stable/api/local.html#copy--db-_local-docid
+        """
+        return LocalDocument(self)

@@ -118,3 +118,8 @@ class Document(BaseDocument):
 class DesignDocumentDocument(BaseDocument):
     def __get_path(self, _id: str) -> List[str]:
         return [self.database.name, '_design', _id]
+
+
+class LocalDocument(BaseDocument):
+    def __get_path(self, _id: str) -> List[str]:
+        return [self.database.name, '_local', _id]

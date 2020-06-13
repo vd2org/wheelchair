@@ -185,3 +185,18 @@ class AllDocsView(BaseView):
 
     def __get_path(self) -> List[str]:
         return [self.__database.name, self.__name]
+
+
+class LocalDocsView(BaseView):
+    def __init__(self, database: 'Database'):
+        self.__database = database
+        self.__name = '_local_docs'
+
+        super().__init__(database.connection, self.__name)
+
+    @property
+    def database(self) -> 'Database':
+        return self.__database
+
+    def __get_path(self) -> List[str]:
+        return [self.__database.name, self.__name]
