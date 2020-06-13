@@ -14,15 +14,15 @@ if typing.TYPE_CHECKING:
     from .database import Database
 
 
-class DesignDocumentsProxy:
+class DesignProxy:
     def __init__(self, database: 'Database'):
         self.__database = database
 
-    def __call__(self, name: str) -> 'DesignDocument':
-        return DesignDocument(self.__database, name)
+    def __call__(self, name: str) -> 'Design':
+        return Design(self.__database, name)
 
-    def __getattr__(self, attr: str) -> 'DesignDocument':
-        return DesignDocument(self.__database, attr)
+    def __getattr__(self, attr: str) -> 'Design':
+        return Design(self.__database, attr)
 
     @property
     def doc(self) -> DesignDocumentDocument:
@@ -37,7 +37,7 @@ class DesignDocumentsProxy:
         return DesignDocumentDocument(self.__database)
 
 
-class DesignDocument:
+class Design:
     def __init__(self, database: 'Database', name: str):
         self.__connection = database.connection
         self.__database = database

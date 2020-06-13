@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .database import Database
-    from .ddoc import DesignDocument
+    from .design import Design
     from ..connection import Connection
 
 
@@ -46,7 +46,7 @@ class ViewQuery(NamedTuple):
 
 
 class ViewProxy:
-    def __init__(self, ddoc: 'DesignDocument'):
+    def __init__(self, ddoc: 'Design'):
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'View':
@@ -157,7 +157,7 @@ class BaseView:
 
 
 class View(BaseView):
-    def __init__(self, ddoc: 'DesignDocument', name: str):
+    def __init__(self, ddoc: 'Design', name: str):
         self.__database = ddoc.database
         self.__ddoc = ddoc
         self.__name = name
@@ -165,7 +165,7 @@ class View(BaseView):
         super().__init__(ddoc.database.connection, name)
 
     @property
-    def ddoc(self) -> Optional['DesignDocument']:
+    def ddoc(self) -> Optional['Design']:
         return self.__ddoc
 
     def __get_path(self) -> List[str]:

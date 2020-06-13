@@ -7,11 +7,11 @@ from typing import Optional, List
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .ddoc import DesignDocument
+    from .design import Design
 
 
 class SearchProxy:
-    def __init__(self, ddoc: 'DesignDocument'):
+    def __init__(self, ddoc: 'Design'):
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'Search':
@@ -22,7 +22,7 @@ class SearchProxy:
 
 
 class Search:
-    def __init__(self, ddoc: 'DesignDocument', name: str):
+    def __init__(self, ddoc: 'Design', name: str):
         self.__connection = ddoc.database.connection
         self.__database = ddoc.database
         self.__ddoc = ddoc
@@ -33,7 +33,7 @@ class Search:
         return self.__name
 
     @property
-    def ddoc(self) -> 'DesignDocument':
+    def ddoc(self) -> 'Design':
         return self.__ddoc
 
     async def __call__(self, *,

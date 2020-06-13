@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from .attachments import Attachments
 from .bulk import Bulk
-from .ddoc import DesignDocumentsProxy
+from .design import DesignProxy
 from .doc import Document, LocalDocument
 from .index import Index
 from .security import Security
@@ -92,8 +92,8 @@ class Database:
         return AllDocsView(self)
 
     @property
-    def ddoc(self) -> DesignDocumentsProxy:
-        return DesignDocumentsProxy(self)
+    def design(self) -> DesignProxy:
+        return DesignProxy(self)
 
     @property
     def bulk(self) -> Bulk:
