@@ -51,7 +51,7 @@ class BaseDocument:
             revs_info=revs_info,
         )
 
-        return await self.__connection.query('GET', self.__get_path(_id), params=params)
+        return await self.__connection.query('GET', self._get_path(_id), params=params)
 
     async def put(self, _id: str, doc: dict, *,
                   rev: Optional[str] = None,
@@ -69,7 +69,7 @@ class BaseDocument:
             new_edits=new_edits
         )
 
-        return await self.__connection.query('PUT', self.__get_path(_id), params=params, data=doc)
+        return await self.__connection.query('PUT', self._get_path(_id), params=params, data=doc)
 
     async def delete(self, _id: str, rev: str, *, batch: Optional[bool] = None) -> dict:
         """\
@@ -83,7 +83,7 @@ class BaseDocument:
             batch="ok" if batch else None,
         )
 
-        return await self.__connection.query('DELETE', self.__get_path(_id), params=params)
+        return await self.__connection.query('DELETE', self._get_path(_id), params=params)
 
     async def copy(self, _id: str, dst_id: str, *,
                    rev: Optional[str] = None,
@@ -104,22 +104,22 @@ class BaseDocument:
             batch="ok" if batch else None,
         )
 
-        return await self.__connection.query('COPY', self.__get_path(_id), params=params, headers=headers)
+        return await self.__connection.query('COPY', self._get_path(_id), params=params, headers=headers)
 
-    def __get_path(self, _id: str) -> List[str]:
+    def _get_path(self, _id: str) -> List[str]:
         raise NotImplementedError
 
 
 class Document(BaseDocument):
-    def __get_path(self, _id: str) -> List[str]:
+    def _get_path(self, _id: str) -> List[str]:
         return [self.database.name, _id]
 
 
 class DesignDocument(BaseDocument):
-    def __get_path(self, _id: str) -> List[str]:
+    def _get_path(self, _id: str) -> List[str]:
         return [self.database.name, '_design', _id]
 
 
 class LocalDocument(BaseDocument):
-    def __get_path(self, _id: str) -> List[str]:
+    def _get_path(self, _id: str) -> List[str]:
         return [self.database.name, '_local', _id]

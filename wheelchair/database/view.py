@@ -122,9 +122,9 @@ class BaseView:
         )
 
         if _use_get:
-            return await self.__connection.query('GET', self.__get_path(), params=params)
+            return await self.__connection.query('GET', self._get_path(), params=params)
 
-        return await self.__connection.query('POST', self.__get_path(), data=params)
+        return await self.__connection.query('POST', self._get_path(), data=params)
 
     async def queries(self, *queries: ViewQuery) -> List[dict]:
         """\
@@ -139,11 +139,11 @@ class BaseView:
             q.stale = self.__format_stale(q.stale)
 
         data = dict(queries=queries)
-        path = self.__get_path() + ['queries']
+        path = self._get_path() + ['queries']
 
         return await self.__connection.query('POST', path, data=data)
 
-    def __get_path(self) -> List[str]:
+    def _get_path(self) -> List[str]:
         raise NotImplementedError
 
     @staticmethod
@@ -168,7 +168,7 @@ class View(BaseView):
     def ddoc(self) -> Optional['Design']:
         return self.__ddoc
 
-    def __get_path(self) -> List[str]:
+    def _get_path(self) -> List[str]:
         return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
 
 
@@ -183,7 +183,7 @@ class AllDocsView(BaseView):
     def database(self) -> 'Database':
         return self.__database
 
-    def __get_path(self) -> List[str]:
+    def _get_path(self) -> List[str]:
         return [self.__database.name, self.__name]
 
 
@@ -198,5 +198,5 @@ class LocalDocsView(BaseView):
     def database(self) -> 'Database':
         return self.__database
 
-    def __get_path(self) -> List[str]:
+    def _get_path(self) -> List[str]:
         return [self.__database.name, self.__name]

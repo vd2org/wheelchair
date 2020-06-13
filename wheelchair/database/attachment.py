@@ -46,22 +46,22 @@ class BaseAttachment:
 
         params = dict(rev=rev, batch=batch)
 
-        return await self.__connection.query('DELETE', self.__get_path(_id, name), params=params)
+        return await self.__connection.query('DELETE', self._get_path(_id, name), params=params)
 
-    def __get_path(self, _id: str, name: str):
+    def _get_path(self, _id: str, name: str):
         raise NotImplementedError
 
 
 class Attachment(BaseAttachment):
-    def __get_path(self, _id: str, name: str):
+    def _get_path(self, _id: str, name: str):
         return [self.database.name, _id, name]
 
 
 class DesignAttachment(BaseAttachment):
-    def __get_path(self, _id: str, name: str):
+    def _get_path(self, _id: str, name: str):
         return [self.database.name, '_design', _id, name]
 
 
 class LocalAttachment(BaseAttachment):
-    def __get_path(self, _id: str, name: str):
+    def _get_path(self, _id: str, name: str):
         return [self.database.name, '_local', _id, name]
