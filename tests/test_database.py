@@ -11,14 +11,14 @@ from wheelchair.database.database import Database
 
 
 @pytest.mark.asyncio
-async def test_insert(new_database: Database):
+async def test_post(new_database: Database):
     doc = dict(
         _id=token_hex(),
         test_data1=token_hex(),
         test_data2=token_hex()
     )
 
-    res = await new_database.insert(doc)
+    res = await new_database.post(doc)
 
     assert res['id'] == doc['_id']
 
