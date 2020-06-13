@@ -173,7 +173,7 @@ class Database:
     def security(self) -> Security:
         return Security(self)
 
-    def purge(self, docs: Dict[List[str]]) -> dict:
+    async def purge(self, docs: Dict[str, List[str]]) -> dict:
         """\
         Removes old document's revisions.
 
@@ -187,7 +187,7 @@ class Database:
         # TODO: implement me!
         raise NotImplementedError
 
-    def missing_revs(self, docs: Dict[List[str]]) -> dict:
+    async def missing_revs(self, docs: Dict[str, List[str]]) -> dict:
         """\
         With given a list of document revisions, returns the document revisions that do not exist in the database.
 
@@ -202,7 +202,7 @@ class Database:
         # TODO: implement me!
         raise NotImplementedError
 
-    def revs_diff(self, docs: Dict[List[str]]) -> dict:
+    async def revs_diff(self, docs: Dict[str, List[str]]) -> dict:
         """\
         Given a set of document/revision IDs, returns the subset
         of those that do not correspond to revisions stored in the database.
