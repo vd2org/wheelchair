@@ -6,7 +6,7 @@
 from typing import Optional, Dict, List
 from typing import TYPE_CHECKING
 
-from .attachments import Attachments
+from .attachment import Attachment, DesignAttachment, LocalAttachment
 from .bulk import Bulk
 from .design import DesignProxy
 from .doc import Document, LocalDocument, DesignDocument
@@ -97,6 +97,10 @@ class Database:
         return Document(self)
 
     @property
+    def att(self) -> Attachment:
+        return Attachment(self)
+
+    @property
     def ddoc(self) -> DesignDocument:
         """\
         Returns Document scope for design documents.
@@ -107,6 +111,19 @@ class Database:
         """
 
         return DesignDocument(self)
+
+    @property
+    def ddoc_att(self) -> DesignAttachment:
+        """\
+        Returns Attachment scope for design documents.
+
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#head--db-_design-ddoc-attname
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#get--db-_design-ddoc-attname
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#put--db-_design-ddoc-attname
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#delete--db-_design-ddoc-attname
+        """
+
+        return DesignAttachment(self)
 
     @property
     def design(self) -> DesignProxy:
@@ -196,10 +213,6 @@ class Database:
         return await self.__connection.query('POST', [self.__name, '_revs_diff'], data=docs)
 
     @property
-    def attachments(self) -> Attachments:
-        return Attachments(self)
-
-    @property
     def local_docs(self) -> LocalDocsView:
         """\
         Returns View scope for local_docs of the database.
@@ -222,3 +235,13 @@ class Database:
         """
 
         return LocalDocument(self)
+
+    @property
+    def local_att(self) -> LocalAttachment:
+        """\
+        Returns Attachment scope for local documents.
+
+        WARNING: This is probably an undocumented feature.
+        """
+
+        return LocalAttachment(self)
