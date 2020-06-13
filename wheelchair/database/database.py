@@ -12,7 +12,7 @@ from .ddoc import DesignDocumentsProxy
 from .doc import Document
 from .security import Security
 from .shards import Shards
-from .view import View
+from .view import AllDocsView
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -80,7 +80,7 @@ class Database:
         return await self.__connection.query('POST', [self.__name], params=params, data=doc)
 
     @property
-    def all(self) -> View:
+    def all(self) -> AllDocsView:
         """\
         Returns View scope for all_docs of the database.
 
@@ -88,7 +88,7 @@ class Database:
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs-queries
         """
-        return View(self, None, '_all_docs')
+        return AllDocsView(self)
 
     @property
     def ddoc(self) -> DesignDocumentsProxy:

@@ -9,8 +9,9 @@ from typing import Any, Optional, Union, List, NamedTuple
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .ddoc import DesignDocument
     from .database import Database
+    from .ddoc import DesignDocument
+    from ..connection import Connection
 
 
 class StaleOptions(str, Enum):
@@ -49,30 +50,20 @@ class ViewProxy:
         self.__ddoc = ddoc
 
     def __call__(self, name: str) -> 'View':
-        return View(self.__ddoc.database, self.__ddoc, name)
+        return View(self.__ddoc, name)
 
     def __getattr__(self, attr: str) -> 'View':
-        return View(self.__ddoc.database, self.__ddoc, attr)
+        return View(self.__ddoc, attr)
 
 
-class View:
-    def __init__(self, database: 'Database', ddoc: Optional['DesignDocument'], name: str):
-        self.__connection = database.connection
-        self.__database = database
-        self.__ddoc = ddoc
+class BaseView:
+    def __init__(self, connection: 'Connection', name: str):
+        self.__connection = connection
         self.__name = name
 
     @property
     def name(self) -> str:
         return self.__name
-
-    @property
-    def ddoc(self) -> Optional['DesignDocument']:
-        return self.__ddoc
-
-    @property
-    def database(self) -> 'DesignDocument':
-        return self.__ddoc
 
     async def __call__(self, *,
                        conflicts: Optional[bool] = None,
@@ -153,10 +144,7 @@ class View:
         return await self.__connection.query('POST', path, data=data)
 
     def __get_path(self) -> List[str]:
-        if self.__ddoc:
-            return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
-
-        return [self.__database.name, self.__name]
+        raise NotImplementedError
 
     @staticmethod
     def __format_stale(stale: Optional[Union[bool, StaleOptions]]) -> StaleOptions:
@@ -166,3 +154,34 @@ class View:
             return StaleOptions.false
 
         return stale
+
+
+class View(BaseView):
+    def __init__(self, ddoc: 'DesignDocument', name: str):
+        self.__database = ddoc.database
+        self.__ddoc = ddoc
+        self.__name = name
+
+        super().__init__(ddoc.database.connection, name)
+
+    @property
+    def ddoc(self) -> Optional['DesignDocument']:
+        return self.__ddoc
+
+    def __get_path(self) -> List[str]:
+        return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
+
+
+class AllDocsView(BaseView):
+    def __init__(self, database: 'Database'):
+        self.__database = database
+        self.__name = '_all_docs'
+
+        super().__init__(database.connection, self.__name)
+
+    @property
+    def database(self) -> 'Database':
+        return self.__database
+
+    def __get_path(self) -> List[str]:
+        return [self.__database.name, self.__name]
