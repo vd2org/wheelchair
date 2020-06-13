@@ -5,7 +5,6 @@
 
 import typing
 
-from .doc import DesignDocument
 from .search import SearchProxy
 from .update import UpdateProxy
 from .view import ViewProxy
@@ -23,8 +22,6 @@ class DesignProxy:
 
     def __getattr__(self, attr: str) -> 'Design':
         return Design(self.__database, attr)
-
-
 
 
 class Design:
