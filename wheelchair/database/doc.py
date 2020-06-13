@@ -10,15 +10,10 @@ if TYPE_CHECKING:
     from .database import Database
 
 
-class Document:
-    def __init__(self, database: 'Database', *, doc_type: Optional[str] = None):
+class BaseDocument:
+    def __init__(self, database: 'Database'):
         self.__connection = database.connection
         self.__database = database
-        self.__doc_type = doc_type
-
-    @property
-    def doc_type(self) -> str:
-        return self.__doc_type
 
     @property
     def database(self) -> 'Database':
@@ -112,7 +107,14 @@ class Document:
         return await self.__connection.query('COPY', self.__get_path(_id), params=params, headers=headers)
 
     def __get_path(self, _id: str) -> List[str]:
-        if self.__doc_type:
-            return [self.__database.name, self.__doc_type, _id]
+        raise NotImplementedError
 
-        return [self.__database.name, _id]
+
+class Document(BaseDocument):
+    def __get_path(self, _id: str) -> List[str]:
+        return [self.database.name, _id]
+
+
+class DesignDocumentDocument(BaseDocument):
+    def __get_path(self, _id: str) -> List[str]:
+        return [self.database.name, '_design', _id]
