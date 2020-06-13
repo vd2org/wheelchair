@@ -115,7 +115,7 @@ class Document(BaseDocument):
         return [self.database.name, _id]
 
 
-class DesignDocumentDocument(BaseDocument):
+class DesignDocument(BaseDocument):
     def __get_path(self, _id: str) -> List[str]:
         return [self.database.name, '_design', _id]
 

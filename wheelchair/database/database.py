@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from .attachments import Attachments
 from .bulk import Bulk
 from .design import DesignProxy
-from .doc import Document, LocalDocument
+from .doc import Document, LocalDocument, DesignDocument
 from .index import Index
 from .security import Security
 from .shards import Shards
@@ -90,6 +90,22 @@ class Database:
         https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs-queries
         """
         return AllDocsView(self)
+
+    @property
+    def doc(self) -> Document:
+        return Document(self)
+
+    @property
+    def ddoc(self) -> DesignDocument:
+        """\
+        Returns Document scope for design documents.
+
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#get--db-_design-ddoc
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#put--db-_design-ddoc
+        https://docs.couchdb.org/en/stable/api/ddoc/common.html#copy--db-_design-ddoc
+        """
+
+        return DesignDocument(self)
 
     @property
     def design(self) -> DesignProxy:
@@ -181,10 +197,6 @@ class Database:
     @property
     def attachments(self) -> Attachments:
         return Attachments(self)
-
-    @property
-    def doc(self) -> Document:
-        return Document(self)
 
     @property
     def local_docs(self) -> LocalDocsView:

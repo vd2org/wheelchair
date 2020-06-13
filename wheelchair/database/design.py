@@ -5,7 +5,7 @@
 
 import typing
 
-from .doc import DesignDocumentDocument
+from .doc import DesignDocument
 from .search import SearchProxy
 from .update import UpdateProxy
 from .view import ViewProxy
@@ -24,17 +24,7 @@ class DesignProxy:
     def __getattr__(self, attr: str) -> 'Design':
         return Design(self.__database, attr)
 
-    @property
-    def doc(self) -> DesignDocumentDocument:
-        """\
-        Returns Document scope for design documents.
 
-        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#get--db-_design_docs
-        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_design_docs
-        https://docs.couchdb.org/en/stable/api/database/bulk-api.html#post--db-_all_docs-queries
-        """
-
-        return DesignDocumentDocument(self.__database)
 
 
 class Design:
