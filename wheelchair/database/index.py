@@ -39,7 +39,7 @@ class Index:
                    name: Optional[str] = None,
                    index_type: Optional[IndexType] = None,
                    selector: Optional[dict] = None,
-                   partitioned: Optional[bool]) -> dict:
+                   partitioned: Optional[bool] = None) -> dict:
         """\
         Create a new mango index.
 
@@ -52,7 +52,7 @@ class Index:
             name=name,
             type=index_type,
             partial_filter_selector=selector,
-            partitioned=partitioned
+            partitioned=False if partitioned is False else None
         )
 
         return await self.__connection.query('POST', [self.__database.name, '_index'], data=data)
