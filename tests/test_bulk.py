@@ -3,8 +3,6 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from secrets import token_hex
-
 import pytest
 
 from wheelchair.database.database import Database
@@ -12,41 +10,36 @@ from wheelchair.database.database import Database
 
 @pytest.mark.asyncio
 async def test_bulk(new_database: Database):
-    doc0 = dict(
-        _id=token_hex(),
-        test_data=token_hex()
-    )
-    doc1 = dict(
-        _id=token_hex(),
-        test_data=token_hex()
-    )
-    doc2 = dict(
-        _id=token_hex(),
-        test_data=token_hex()
-    )
-
-    all_docs = [doc0, doc1, doc2]
-
-    res = await new_database.bulk.docs(all_docs)
-
-    assert res[0]['ok'] == True
-    assert res[0]['id'] == doc0['_id']
-    assert res[1]['ok'] == True
-    assert res[1]['id'] == doc1['_id']
-    assert res[2]['ok'] == True
-    assert res[2]['id'] == doc2['_id']
-
-    all_get = [
-        dict(id=doc0['_id']),
-        dict(id=doc1['_id']),
-        dict(id=doc2['_id']),
+    docs = [
+        dict(value=1),
+        dict(value=2),
+        dict(value=3),
+        dict(value=4),
+        dict(value=5),
     ]
 
-    res = await new_database.bulk.get(all_get)
+    res = await new_database.bulk.docs(docs)
 
-    assert res[0]['id'] == doc0['_id']
-    assert res[0]['docs'][0]['ok']['test_data'] == doc0['test_data']
-    assert res[1]['id'] == doc1['_id']
-    assert res[1]['docs'][0]['ok']['test_data'] == doc1['test_data']
-    assert res[2]['id'] == doc2['_id']
-    assert res[2]['docs'][0]['ok']['test_data'] == doc2['test_data']
+    assert len(res) == 5
+
+    for row in res:
+        assert row['ok']
+        assert isinstance(row['id'], str)
+        assert isinstance(row['rev'], str)
+
+    docs = [dict(id=e['id']) for e in res]
+    res = await new_database.bulk(docs)
+
+    assert len(res) == 5
+
+    for row in res:
+        assert isinstance(row['id'], str)
+        assert len(row['docs']) == 1
+
+        docs = row['docs'][0]
+
+        assert 'ok' in docs
+
+        doc = docs['ok']
+
+        assert doc['value'] in {1, 2, 3, 4, 5}
