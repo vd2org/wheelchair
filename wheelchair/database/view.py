@@ -45,17 +45,6 @@ class ViewQuery(NamedTuple):
     update_seq: Optional[bool] = None
 
 
-class ViewProxy:
-    def __init__(self, ddoc: 'Design'):
-        self.__ddoc = ddoc
-
-    def __call__(self, name: str) -> 'View':
-        return View(self.__ddoc, name)
-
-    def __getattr__(self, attr: str) -> 'View':
-        return View(self.__ddoc, attr)
-
-
 class BaseView:
     def __init__(self, connection: 'Connection', name: str):
         self.__connection = connection
@@ -154,6 +143,17 @@ class BaseView:
             return StaleOptions.false
 
         return stale
+
+
+class ViewProxy:
+    def __init__(self, ddoc: 'Design'):
+        self.__ddoc = ddoc
+
+    def __call__(self, name: str) -> 'View':
+        return View(self.__ddoc, name)
+
+    def __getattr__(self, attr: str) -> 'View':
+        return View(self.__ddoc, attr)
 
 
 class View(BaseView):
