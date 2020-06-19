@@ -102,8 +102,10 @@ class Connection:
         return self.__url
 
     async def direct_query(self, query: Query) -> Union[List, Dict, ClientResponse]:
-
         method, path, params, data, headers = await self.__auth(self, query)
+
+        if data:
+            data = {k: v for k, v in data.items() if v is not None}
 
         path = "/".join([quote(i, safe='') for i in path])
 
