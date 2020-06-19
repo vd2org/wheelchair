@@ -107,6 +107,9 @@ class Connection:
         if data:
             data = {k: v for k, v in data.items() if v is not None}
 
+        headers = headers if headers else {}
+        headers['Content-Type'] = 'application/json'
+
         path = "/".join([quote(i, safe='') for i in path])
 
         if params:
