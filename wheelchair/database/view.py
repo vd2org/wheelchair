@@ -4,20 +4,15 @@
 
 
 import json
-from enum import Enum
 from typing import Any, Optional, Union, List, NamedTuple
 from typing import TYPE_CHECKING
+
+from ..utils import StaleOptions
 
 if TYPE_CHECKING:
     from .database import Database
     from .design import Design
     from ..connection import Connection
-
-
-class StaleOptions(str, Enum):
-    ok = "ok"
-    update_after = "update_after"
-    false = "false"
 
 
 class ViewQuery(NamedTuple):
@@ -103,7 +98,7 @@ class BaseView:
             skip=skip,
             sorted=sorted,
             stable=stable,
-            stale=self.__format_stale(stale),
+            stale=StaleOptions.format(stale),
             start_key=json.dumps(start_key) if _use_get else start_key,
             start_key_doc_id=start_key_doc_id,
             update=update,
@@ -134,15 +129,6 @@ class BaseView:
 
     def _get_path(self) -> List[str]:
         raise NotImplementedError
-
-    @staticmethod
-    def __format_stale(stale: Optional[Union[bool, StaleOptions]]) -> StaleOptions:
-        if stale is True:
-            return StaleOptions.ok
-        if stale is False:
-            return StaleOptions.false
-
-        return stale
 
 
 class ViewProxy:

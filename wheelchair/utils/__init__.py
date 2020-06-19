@@ -5,3 +5,4 @@
 
 from .query import Query
 from .simple_scope import SimpleScope
+from .stale_options import StaleOptions

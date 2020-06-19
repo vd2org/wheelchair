@@ -51,9 +51,11 @@ class Index:
             ddoc=ddoc,
             name=name,
             type=index_type,
-            partial_filter_selector=selector,
             partitioned=False if partitioned is False else None
         )
+
+        if selector:
+            data['index']['partial_filter_selector'] = selector
 
         return await self.__connection.query('POST', [self.__database.name, '_index'], data=data)
 

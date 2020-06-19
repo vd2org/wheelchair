@@ -3,7 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union, Tuple
 from typing import TYPE_CHECKING
 
 from .attachment import Attachment, DesignAttachment, LocalAttachment
@@ -14,6 +14,7 @@ from .index import Index
 from .security import Security
 from .shards import Shards
 from .view import AllDocsView, LocalDocsView
+from ..utils import StaleOptions
 
 if TYPE_CHECKING:
     from ..connection import Connection
@@ -133,17 +134,80 @@ class Database:
     def bulk(self) -> Bulk:
         return Bulk(self)
 
-    async def find(self):
-        # TODO: implement me!
-        raise NotImplementedError
+    async def find(self, selector: dict, *,
+                   limit: Optional[int] = None,
+                   skip: Optional[int] = None,
+                   sort: Optional[dict] = None,
+                   fields: Optional[List[str]] = None,
+                   use_index: Optional[Union[str, Tuple[str]]] = None,
+                   r: Optional[int] = None,
+                   bookmark: Optional[str] = None,
+                   update: Optional[bool] = None,
+                   stable: Optional[bool] = None,
+                   stale: Optional[Union[bool, StaleOptions]] = None,
+                   execution_stats: Optional[bool] = None) -> dict:
+        """\
+        Executes find request using Mango declarative syntax.
+
+        https://docs.couchdb.org/en/stable/api/database/find.html#post--db-_find
+        """
+
+        data = dict(
+            selector=selector,
+            limit=limit,
+            skip=skip,
+            sort=sort,
+            fields=fields,
+            use_index=use_index,
+            r=r,
+            bookmark=bookmark,
+            update=update,
+            stable=stable,
+            stale=StaleOptions.format(stale),
+            execution_stats=execution_stats,
+        )
+
+        return await self.__connection.query('POST', [self.__name, '_find'], data=data)
 
     @property
     def index(self) -> Index:
         return Index(self)
 
-    async def explain(self):
-        # TODO: implement me!
-        raise NotImplementedError
+    async def explain(self,
+                      selector: dict,
+                      limit: Optional[int] = None,
+                      skip: Optional[int] = None,
+                      sort: Optional[dict] = None,
+                      fields: Optional[List[str]] = None,
+                      use_index: Optional[Union[str, Tuple[str]]] = None,
+                      r: Optional[int] = None,
+                      bookmark: Optional[str] = None,
+                      update: Optional[bool] = None,
+                      stable: Optional[bool] = None,
+                      stale: Optional[Union[bool, StaleOptions]] = None,
+                      execution_stats: Optional[bool] = None) -> dict:
+        """\
+        Explain with index will be used in find request.
+
+        https://docs.couchdb.org/en/stable/api/database/find.html#post--db-_explain
+        """
+
+        data = dict(
+            selector=selector,
+            limit=limit,
+            skip=skip,
+            sort=sort,
+            fields=fields,
+            use_index=use_index,
+            r=r,
+            bookmark=bookmark,
+            update=update,
+            stable=stable,
+            stale=StaleOptions.format(stale),
+            execution_stats=execution_stats,
+        )
+
+        return await self.__connection.query('POST', [self.__name, '_explain'], data=data)
 
     @property
     def shards(self) -> Shards:
