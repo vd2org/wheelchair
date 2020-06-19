@@ -38,7 +38,7 @@ class Design:
     def database(self) -> 'Database':
         return self.__database
 
-    async def info(self) -> dict:
+    async def __call__(self) -> dict:
         """\
         Returns information about design document.
 
