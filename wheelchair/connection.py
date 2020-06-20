@@ -110,7 +110,7 @@ class Connection:
         headers = headers if headers else {}
         headers['Content-Type'] = 'application/json'
 
-        path = "/".join([quote(i, safe='') for i in path])
+        path = "/".join([quote(i, safe='') for i in path if i is not None])
 
         if params:
             params = {k: self._format_query_param(v) for k, v in params.items() if v is not None}

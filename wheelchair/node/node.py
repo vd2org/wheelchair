@@ -3,10 +3,24 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
+from typing import Optional
 from typing import TYPE_CHECKING
+
+from .config import Config
 
 if TYPE_CHECKING:
     from ..connection import Connection
+
+
+class NodeProxy:
+    def __init__(self, connection: 'Connection'):
+        self.__connection = connection
+
+    def __call__(self, name: Optional[str] = "_local") -> 'Node':
+        return Node(self.__connection, name)
+
+    def __getattr__(self, attr) -> 'Node':
+        return Node(self.__connection, attr)
 
 
 class Node:
@@ -17,6 +31,10 @@ class Node:
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def connection(self) -> 'Connection':
+        return self._connection
 
     async def __call__(self) -> str:
         """\
@@ -65,3 +83,6 @@ class Node:
         res = await self._connection.query('GET', ['_node', self._name, '_restart'])
 
         return res['name']
+
+    async def config(self) -> Config:
+        return Config(self._connection, self._name)
