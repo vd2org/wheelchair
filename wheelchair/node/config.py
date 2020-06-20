@@ -3,6 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
+from typing import Optional, Any
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
