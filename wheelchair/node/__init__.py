@@ -3,4 +3,4 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from .node_proxy import NodeProxy
+from .node import NodeProxy
