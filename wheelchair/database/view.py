@@ -133,35 +133,35 @@ class BaseView:
 
 
 class ViewProxy:
-    def __init__(self, ddoc: 'Design'):
-        self.__ddoc = ddoc
+    def __init__(self, design: 'Design'):
+        self.__design = design
 
     def __call__(self, name: str) -> 'View':
-        return View(self.__ddoc, name)
+        return View(self.__design, name)
 
     def __getattr__(self, attr: str) -> 'View':
-        return View(self.__ddoc, attr)
+        return View(self.__design, attr)
 
 
 class View(BaseView):
-    def __init__(self, ddoc: 'Design', name: str):
-        self.__database = ddoc.database
-        self.__ddoc = ddoc
+    def __init__(self, design: 'Design', name: str):
+        self.__database = design.database
+        self.__design = design
         self.__name = name
 
-        super().__init__(ddoc.database.connection, name)
+        super().__init__(design.database.connection, name)
 
     @property
-    def ddoc(self) -> Optional['Design']:
-        return self.__ddoc
+    def design(self) -> Optional['Design']:
+        return self.__design
 
     def _get_path(self) -> List[str]:
-        return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
+        return [self.__database.name, '_design', self.__design.name, '_view', self.__name]
 
 
 class PartitionViewProxy:
-    def __init__(self, ddoc: 'PartitionDesign'):
-        self.__design = ddoc
+    def __init__(self, design: 'PartitionDesign'):
+        self.__design = design
 
     def __call__(self, name: str) -> 'PartitionView':
         return PartitionView(self.__design, name)
