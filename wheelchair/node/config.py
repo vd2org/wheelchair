@@ -27,8 +27,8 @@ class Config:
         """\
         Returns the entire node's config or a selected section of the config or a single key of the config
 
-        http://localhost:5984/_utils/docs/api/server/configuration.html#get--_node-node-name-_config
-        http://localhost:5984/_utils/docs/api/server/configuration.html#get--_node-node-name-_config-section
+        https://docs.couchdb.org/en/latest/api/server/configuration.html#get--_node-node-name-_config
+        https://docs.couchdb.org/en/latest/api/server/configuration.html#get--_node-node-name-_config-section
         """
 
         return await self._connection.query('GET', ['_node', self._name, '_config', section, key])
@@ -37,7 +37,7 @@ class Config:
         """\
         Updates a configuration value
 
-        http://localhost:5984/_utils/docs/api/server/configuration.html#put--_node-node-name-_config-section-key
+        https://docs.couchdb.org/en/latest/api/server/configuration.html#put--_node-node-name-_config-section-key
         """
 
         return await self._connection.query('PUT', ['_node', self._name, '_config', section, key], data=value)
@@ -46,7 +46,7 @@ class Config:
         """\
         Deletes a configuration value
 
-        http://localhost:5984/_utils/docs/api/server/configuration.html#delete--_node-node-name-_config-section-key
+        https://docs.couchdb.org/en/latest/api/server/configuration.html#delete--_node-node-name-_config-section-key
         """
 
         return await self._connection.query('DELETE', ['_node', self._name, '_config', section, key])
