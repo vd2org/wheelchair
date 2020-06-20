@@ -11,8 +11,9 @@ from ..utils import StaleOptions
 
 if TYPE_CHECKING:
     from .database import Database
-    from .design import Design
+    from .design import Design, PartitionDesign
     from ..connection import Connection
+    from .partition import Partition
 
 
 class ViewQuery(NamedTuple):
@@ -120,7 +121,7 @@ class BaseView:
         queries = [dict(q._asdict()) for q in queries]
 
         for q in queries:
-            q.stale = self.__format_stale(q.stale)
+            q.stale = StaleOptions.format(q.stale)
 
         data = dict(queries=queries)
         path = self._get_path() + ['queries']
@@ -158,6 +159,40 @@ class View(BaseView):
         return [self.__database.name, '_design', self.__ddoc.name, '_view', self.__name]
 
 
+class PartitionViewProxy:
+    def __init__(self, ddoc: 'PartitionDesign'):
+        self.__design = ddoc
+
+    def __call__(self, name: str) -> 'PartitionView':
+        return PartitionView(self.__design, name)
+
+    def __getattr__(self, attr: str) -> 'PartitionView':
+        return PartitionView(self.__design, attr)
+
+
+class PartitionView(BaseView):
+    def __init__(self, design: 'PartitionDesign', name: str):
+        self.__design = design
+        self.__name = name
+
+        super().__init__(design.partition.database.connection, name)
+
+    @property
+    def design(self) -> 'PartitionDesign':
+        return self.__design
+
+    def _get_path(self) -> List[str]:
+        return [
+            self.__design.partition.database.name,
+            '_partition',
+            self.__design.partition.name,
+            '_design',
+            self.__design.name,
+            '_view',
+            self.__name
+        ]
+
+
 class AllDocsView(BaseView):
     def __init__(self, database: 'Database'):
         self.__database = database
@@ -171,6 +206,21 @@ class AllDocsView(BaseView):
 
     def _get_path(self) -> List[str]:
         return [self.__database.name, self.__name]
+
+
+class PartitionAllDocsView(BaseView):
+    def __init__(self, partition: 'Partition'):
+        self.__partition = partition
+        self.__name = '_all_docs'
+
+        super().__init__(partition.database.connection, self.__name)
+
+    @property
+    def partition(self) -> 'Partition':
+        return self.__partition
+
+    def _get_path(self) -> List[str]:
+        return [self.__partition.database.name, '_partition', self.__partition.name, self.__name]
 
 
 class LocalDocsView(BaseView):

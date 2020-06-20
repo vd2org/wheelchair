@@ -7,9 +7,10 @@ import typing
 
 from .search import SearchProxy
 from .update import UpdateProxy
-from .view import ViewProxy
+from .view import ViewProxy, PartitionViewProxy
 
 if typing.TYPE_CHECKING:
+    from .partition import Partition
     from .database import Database
 
 
@@ -70,3 +71,32 @@ class Design:
     @property
     def update(self) -> UpdateProxy:
         return UpdateProxy(self)
+
+
+class PartitionDesignProxy:
+    def __init__(self, database: 'Database'):
+        self.__database = database
+
+    def __call__(self, name: str) -> 'PartitionDesign':
+        return PartitionDesign(self.__database, name)
+
+    def __getattr__(self, attr: str) -> 'PartitionDesign':
+        return PartitionDesign(self.__database, attr)
+
+
+class PartitionDesign:
+    def __init__(self, partition: 'Partition', name: str):
+        self.__partition = partition
+        self.__name = name
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def partition(self) -> 'Partition':
+        return self.__partition
+
+    @property
+    def view(self) -> PartitionViewProxy:
+        return PartitionViewProxy(self)
