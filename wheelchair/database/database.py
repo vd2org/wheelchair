@@ -11,6 +11,7 @@ from .bulk import Bulk
 from .design import DesignProxy
 from .doc import Document, LocalDocument, DesignDocument
 from .index import Index
+from .revs_limit import RevsLimit
 from .security import Security
 from .shards import Shards
 from .view import AllDocsView, LocalDocsView
@@ -262,9 +263,8 @@ class Database:
         return res['missing_revs']
 
     @property
-    def revs_limit(self):
-        # TODO: implement me!
-        raise NotImplementedError
+    def revs_limit(self) -> RevsLimit:
+        return RevsLimit(self)
 
     async def revs_diff(self, docs: Dict[str, List[str]]) -> dict:
         """\

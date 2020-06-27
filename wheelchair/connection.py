@@ -102,17 +102,20 @@ class Connection:
     def url(self) -> str:
         return self.__url
 
-    async def direct_query(self, query: Query, as_stream: bool = False) -> Union[List, Dict, StreamResponse]:
+    async def direct_query(self, query: Query, as_stream: bool = False) -> Union[int, str, List, Dict, StreamResponse]:
         method, path, params, data, headers = await self.__auth(self, query)
 
         headers = headers if headers else {}
 
         if isinstance(data, StreamRequest):
             headers['Content-Type'] = data.content_type
-        else:  # isinstance(data, dict) == True
+        elif isinstance(data, dict):
             if data:
                 data = {k: v for k, v in data.items() if v is not None}
 
+            headers['Content-Type'] = 'application/json'
+
+        else:  # isinstance(data, str) or isinstance(data, int) == True
             headers['Content-Type'] = 'application/json'
 
         path = "/".join([quote(i, safe='') for i in path if i is not None])
@@ -138,7 +141,7 @@ class Connection:
 
         res = await req.json()
 
-        if 'error' in res:
+        if isinstance(res, dict) and 'error' in res:
             raise RequestError.get_exception(req.status, res)
 
         return res
@@ -147,9 +150,9 @@ class Connection:
                     path: List[str],
                     *,
                     params: Optional[dict] = None,
-                    data: Optional[Union[dict, StreamRequest]] = None,
+                    data: Optional[Union[int, str, dict, StreamRequest]] = None,
                     headers: Optional[dict] = None,
-                    as_stream: bool = False) -> Union[List, Dict, StreamResponse]:
+                    as_stream: bool = False) -> Union[int, str, List, Dict, StreamResponse]:
         """
         Performs request to CouchDB
 
