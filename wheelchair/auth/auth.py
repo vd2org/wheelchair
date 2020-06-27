@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class Auth:
     async def __call__(self, connection: 'Connection', query: Query) -> Query:
-        raise NotImplemented
+        raise NotImplementedError
 
     async def authenticate(self, connection: 'Connection'):
-        raise NotImplemented
+        raise NotImplementedError
