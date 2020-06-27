@@ -37,8 +37,11 @@ async def test_changes(new_database: Database):
 
 @pytest.mark.asyncio
 async def test_changes_polling(new_database: Database):
+    res = await new_database.changes()
+    last_seq = res['last_seq']
+
     loop = get_event_loop()
-    task = loop.create_task(new_database.changes(since=0, timeout=60_000))
+    task = loop.create_task(new_database.changes(since=last_seq, timeout=60_000))
 
     _id = token_hex()
 
