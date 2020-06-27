@@ -3,8 +3,9 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-import pytest
 from secrets import token_hex
+
+import pytest
 
 from wheelchair import Connection
 from wheelchair.database.database import Database
@@ -29,4 +30,4 @@ async def new_database(admin_connection: Connection) -> Database:
 
     yield db
 
-    await db.delete()
+    # await db.delete()

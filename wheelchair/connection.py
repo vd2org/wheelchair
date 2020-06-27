@@ -8,7 +8,7 @@ import logging
 from typing import Optional, List, Dict, Union
 from urllib.parse import urlsplit, urljoin, quote, urlencode
 
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientSession
 
 from .auth import Auth, CookieAuth
 from .database import DatabaseProxy
@@ -17,6 +17,7 @@ from .node import NodeProxy
 from .server import Server
 from .session import Session
 from .utils import Query
+from .utils.query import StreamResponse, StreamRequest
 
 default_logger = logging.getLogger('wheelchair')
 
@@ -101,14 +102,18 @@ class Connection:
     def url(self) -> str:
         return self.__url
 
-    async def direct_query(self, query: Query) -> Union[List, Dict, ClientResponse]:
+    async def direct_query(self, query: Query, as_stream: bool = False) -> Union[List, Dict, StreamResponse]:
         method, path, params, data, headers = await self.__auth(self, query)
 
-        if data:
-            data = {k: v for k, v in data.items() if v is not None}
-
         headers = headers if headers else {}
-        headers['Content-Type'] = 'application/json'
+
+        if isinstance(data, StreamRequest):
+            headers['Content-Type'] = data.content_type
+        else:  # isinstance(data, dict) == True
+            if data:
+                data = {k: v for k, v in data.items() if v is not None}
+
+            headers['Content-Type'] = 'application/json'
 
         path = "/".join([quote(i, safe='') for i in path if i is not None])
 
@@ -123,10 +128,13 @@ class Connection:
 
         self.__logger.debug("Querying CouchDB: %s %s", method, full_url)
 
-        req = await self.__asyncio_session.request(method, full_url, json=data, headers=headers)
+        if isinstance(data, StreamRequest):
+            req = await self.__asyncio_session.request(method, full_url, data=data.stream, headers=headers)
+        else:  # isinstance(data, dict) == True
+            req = await self.__asyncio_session.request(method, full_url, json=data, headers=headers)
 
-        if not req.content_type == 'application/json':
-            return req
+        if as_stream and req.status in (200, 201, 202):
+            return StreamResponse(req.headers['Content-Type'], req.content)
 
         res = await req.json()
 
@@ -139,8 +147,9 @@ class Connection:
                     path: List[str],
                     *,
                     params: Optional[dict] = None,
-                    data: Optional[dict] = None,
-                    headers: Optional[dict] = None) -> Union[List, Dict, ClientResponse]:
+                    data: Optional[Union[dict, StreamRequest]] = None,
+                    headers: Optional[dict] = None,
+                    as_stream: bool = False) -> Union[List, Dict, StreamResponse]:
         """
         Performs request to CouchDB
 
@@ -149,18 +158,21 @@ class Connection:
         :param params: Query parameters
         :param data: Data
         :param headers: Request headers
+        :param as_stream: Return StreamResponse instead of processed object
         :return: Result of the request
         """
 
+        query = Query(method, path, params, data, headers)
+
         try:
-            return await self.direct_query(Query(method, path, params, data, headers))
+            return await self.direct_query(query, as_stream)
         except UnauthorizedError:
             pass
 
         # We are here because an UnauthorizedError occurred
         # Let's try authentication and try again to execute the request
         await self.authenticate()
-        return await self.direct_query(Query(method, path, params, data, headers))
+        return await self.direct_query(query, as_stream)
 
     @property
     def server(self) -> Server:
