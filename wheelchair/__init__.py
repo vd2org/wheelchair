@@ -3,7 +3,5 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from . import exceptions
-from .connection import Connection
-from .exceptions import *
+from .api import Connection
 from .version import version

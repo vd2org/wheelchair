@@ -3,22 +3,9 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from typing import Optional, Union, List, NamedTuple
+from typing import Optional, Union, List
 
 from ..utils import SimpleScope
-
-
-class ActiveTasksResult(NamedTuple):
-    changes_done: int
-    database: str
-    pid: str
-    progress: int
-    started_on: int
-    status: str
-    task: str
-    total_changes: int
-    type: str
-    updated_on: int
 
 
 class Server(SimpleScope):
@@ -31,15 +18,14 @@ class Server(SimpleScope):
 
         return await self._connection.query('GET', [])
 
-    async def active_tasks(self) -> List[ActiveTasksResult]:
+    async def active_tasks(self) -> List[dict]:
         """\
         Returns database's active tasks
 
         https://docs.couchdb.org/en/latest/api/server/common.html#active-tasks
         """
 
-        res = await self._connection.query('GET', ['_active_tasks'])
-        return [ActiveTasksResult(**e) for e in res]
+        return await self._connection.query('GET', ['_active_tasks'])
 
     async def all_dbs(self,
                       start_key: Optional[Union[list, dict]] = None,

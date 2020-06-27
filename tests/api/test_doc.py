@@ -7,8 +7,7 @@ from secrets import token_hex
 
 import pytest
 
-from wheelchair import NotFoundError
-from wheelchair.database.database import Database
+from wheelchair.api import Database, NotFoundError
 
 
 @pytest.mark.asyncio

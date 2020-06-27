@@ -5,19 +5,19 @@
 
 import pytest
 
-from wheelchair.database.database import Database
+from wheelchair.api import Database
 
 
 @pytest.mark.asyncio
 async def test_revs_limit(new_database: Database):
-    res = await new_database.revs_limit()
+    res = await new_database.purged_infos_limit()
 
     assert isinstance(res, int)
 
-    res = await new_database.revs_limit.put(100)
+    res = await new_database.purged_infos_limit.put(100)
 
     assert res
 
-    res = await new_database.revs_limit()
+    res = await new_database.purged_infos_limit()
 
     assert res == 100

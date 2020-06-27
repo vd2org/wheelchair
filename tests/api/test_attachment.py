@@ -8,8 +8,8 @@ from secrets import token_hex
 
 import pytest
 
-from wheelchair.database.database import Database
-from wheelchair.utils.query import StreamResponse
+from wheelchair.api import Database
+from wheelchair.api.utils.query import StreamResponse
 
 
 @pytest.mark.asyncio

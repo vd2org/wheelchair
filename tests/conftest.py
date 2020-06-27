@@ -8,7 +8,7 @@ from secrets import token_hex
 import pytest
 
 from wheelchair import Connection
-from wheelchair.database.database import Database
+from wheelchair.api import Database
 
 pytest_plugins = ("pytest_asyncio",)
 

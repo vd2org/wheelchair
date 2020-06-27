@@ -2,7 +2,6 @@
 # This file is part of Wheelchair, the async CouchDB connector.
 # Wheelchair is released under the MIT License (see LICENSE).
 
-
-from .query import Query
-from .simple_scope import SimpleScope
-from .stale_options import StaleOptions
+from .database import Database
+from .database import DatabaseProxy
+from .view import ViewQuery
