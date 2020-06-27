@@ -259,7 +259,7 @@ class Database:
         https://docs.couchdb.org/en/stable/api/database/misc.html#post--db-_missing_revs
         """
 
-        res = await self.__connection.query('POST', [self.__name, '_purge'], data=docs)
+        res = await self.__connection.query('POST', [self.__name, '_missing_revs'], data=docs)
         return res['missing_revs']
 
     @property
