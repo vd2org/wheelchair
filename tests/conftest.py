@@ -30,4 +30,4 @@ async def new_database(admin_connection: Connection) -> Database:
 
     yield db
 
-    # await db.delete()
+    await db.delete()
