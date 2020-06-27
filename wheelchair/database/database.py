@@ -11,6 +11,7 @@ from .bulk import Bulk
 from .design import DesignProxy
 from .doc import Document, LocalDocument, DesignDocument
 from .index import Index
+from .purged_infos_limit import PurgedInfosLimit
 from .revs_limit import RevsLimit
 from .security import Security
 from .shards import Shards
@@ -248,9 +249,8 @@ class Database:
         return await self.__connection.query('POST', [self.__name, '_purge'], data=docs)
 
     @property
-    def purged_infos_limit(self):
-        # TODO: implement me!
-        raise NotImplementedError
+    def purged_infos_limit(self) -> PurgedInfosLimit:
+        return PurgedInfosLimit(self)
 
     async def missing_revs(self, docs: Dict[str, List[str]]) -> dict:
         """\
