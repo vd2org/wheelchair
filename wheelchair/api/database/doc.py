@@ -56,7 +56,7 @@ class BaseDocument:
     async def put(self, _id: str, doc: dict, *,
                   rev: Optional[str] = None,
                   batch: Optional[bool] = None,
-                  new_edits: Optional[bool] = True) -> dict:
+                  new_edits: Optional[bool] = None) -> dict:
         """\
         Put new document or update existing document.
 
