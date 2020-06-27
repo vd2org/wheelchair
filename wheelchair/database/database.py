@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from .attachment import Attachment, DesignAttachment, LocalAttachment
 from .bulk import Bulk
+from .changes import Changes
 from .design import DesignProxy
 from .doc import Document, LocalDocument, DesignDocument
 from .index import Index
@@ -214,6 +215,10 @@ class Database:
     @property
     def shards(self) -> Shards:
         return Shards(self)
+
+    @property
+    def changes(self) -> Changes:
+        return Changes(self)
 
     async def compact(self) -> bool:
         """\
