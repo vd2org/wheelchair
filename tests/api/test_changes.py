@@ -3,7 +3,7 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from asyncio import create_task
+from asyncio import get_event_loop
 from secrets import token_hex
 
 import pytest
@@ -37,7 +37,8 @@ async def test_changes(new_database: Database):
 
 @pytest.mark.asyncio
 async def test_changes_polling(new_database: Database):
-    task = create_task(new_database.changes(since=0, timeout=60_000))
+    loop = get_event_loop()
+    task = loop.create_task(new_database.changes(since=0, timeout=60_000))
 
     _id = token_hex()
 
