@@ -3,30 +3,12 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from typing import List, NamedTuple
-from typing import TYPE_CHECKING
-
 from .utils import Query
 from .utils import SimpleScope
 
-if TYPE_CHECKING:
-    pass
-
-
-class SessionGetResult(NamedTuple):
-    ok: bool
-    userCtx: dict
-    info: dict
-
-
-class SessionAuthResult(NamedTuple):
-    ok: bool
-    name: str
-    roles: List[str]
-
 
 class Session(SimpleScope):
-    async def __call__(self) -> SessionGetResult:
+    async def __call__(self) -> dict:
         """\
         Get current session
 
@@ -34,10 +16,9 @@ class Session(SimpleScope):
         """
 
         query = Query('GET', ['_session'])
-        res = await self._connection.direct_query(query)
-        return SessionGetResult(**res)
+        return await self._connection.direct_query(query)
 
-    async def post(self, username: str, password: str) -> SessionAuthResult:
+    async def post(self, username: str, password: str) -> dict:
         """\
         Starts new session on server
 
@@ -47,8 +28,7 @@ class Session(SimpleScope):
         data = {'name': username, 'password': password}
 
         query = Query('POST', ['_session'], data=data)
-        res = await self._connection.direct_query(query)
-        return SessionAuthResult(**res)
+        return await self._connection.direct_query(query)
 
     async def delete(self) -> bool:
         """\
