@@ -61,7 +61,7 @@ class Changes:
             'include_docs': include_docs,
             'attachments': attachments,
             'att_encoding_info': att_encoding_info,
-            'last_event_id': last_event_id,
+            'last-event-id': last_event_id,
             'limit': limit,
             'since': since,
             'style': style,
