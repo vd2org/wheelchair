@@ -11,7 +11,7 @@ from ..utils import SimpleScope
 class Server(SimpleScope):
     async def __call__(self) -> dict:
         """\
-        Return instance metadata
+        Return instance metadata.
 
         http://docs.couchdb.org/en/latest/api/server/common.html#get--
         """
@@ -20,7 +20,7 @@ class Server(SimpleScope):
 
     async def active_tasks(self) -> List[dict]:
         """\
-        Returns database's active tasks
+        Returns database's active tasks.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#active-tasks
         """
@@ -34,10 +34,9 @@ class Server(SimpleScope):
                       limit: Optional[int] = None,
                       descending: Optional[bool] = None) -> List[str]:
         """\
-        Returns a list of all the databases
+        Returns a list of all the databases.
 
         http://docs.couchdb.org/en/latest/api/server/common.html#get--_all_dbs
-
         """
 
         params = dict(
@@ -52,40 +51,36 @@ class Server(SimpleScope):
 
     async def dbs_info(self, keys: List[str]) -> List[dict]:
         """\
-        Returns info of the selected databases
+        Returns info of the selected databases.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#post--_dbs_info
-
         """
 
         return await self._connection.query('POST', ['_dbs_info'], data=dict(keys=keys))
 
     async def membership(self) -> dict:
         """\
-        Returns list of the cluster nodes
+        Returns list of the cluster nodes.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_membership
-
         """
 
         return await self._connection.query('GET', ['_membership'])
 
     async def up(self) -> dict:
         """\
-        Ping the node
+        Ping the node.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_up
-
         """
 
         return await self._connection.query('GET', ['_up'])
 
     async def uuids(self, count: int = 1) -> List[str]:
         """\
-        Generate UUIDs by the server
+        Generate UUIDs by the server.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_uuids
-
         """
 
         res = await self._connection.query('GET', ['_uuids'], params=dict(count=count))

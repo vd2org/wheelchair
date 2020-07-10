@@ -34,7 +34,6 @@ class Shards:
         Returns information about specific document's shard.
 
         https://docs.couchdb.org/en/stable/api/database/shard.html#get--db-_shards-docid
-
         """
 
         path = [self.__database.name, '_shards', _id]

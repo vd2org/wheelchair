@@ -38,10 +38,9 @@ class Node:
 
     async def __call__(self) -> str:
         """\
-        Returns node's name
+        Returns node's name.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name
-
         """
 
         res = await self._connection.query('GET', ['_node', self._name])
@@ -50,10 +49,9 @@ class Node:
 
     async def stats(self) -> dict:
         """\
-        Returns node's statistics
+        Returns node's statistics.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_stats
-
         """
 
         res = await self._connection.query('GET', ['_node', self._name, '_stats'])
@@ -62,10 +60,9 @@ class Node:
 
     async def system(self) -> dict:
         """\
-        Returns node's system level statistics
+        Returns node's system level statistics.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--_node-node-name-_system
-
         """
 
         res = await self._connection.query('GET', ['_node', self._name, '_system'])
@@ -74,10 +71,9 @@ class Node:
 
     async def restart(self) -> dict:
         """\
-        Restarts selected node
+        Restarts selected node.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#post--_node-node-name-_restart
-
         """
 
         res = await self._connection.query('GET', ['_node', self._name, '_restart'])
