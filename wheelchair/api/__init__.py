@@ -3,7 +3,6 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
-from . import exceptions
 from .connection import Connection
 from .database import Database, ViewQuery
 from .exceptions import *
