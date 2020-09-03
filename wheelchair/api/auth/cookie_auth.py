@@ -21,4 +21,4 @@ class CookieAuth(Auth):
         return params
 
     async def authenticate(self, connection: 'Connection'):
-        await connection.session.post(self._username, self._password)
+        return await connection.session.post(self._username, self._password)
