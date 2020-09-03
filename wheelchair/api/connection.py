@@ -202,7 +202,7 @@ class Connection:
     async def authenticate(self):
         """Performs authentication though given auth."""
 
-        await self.__auth.authenticate(self)
+        return await self.__auth.authenticate(self)
 
     async def shutdown_cleanup(self):
         if self.__asyncio_session is None:
