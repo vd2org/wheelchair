@@ -38,6 +38,7 @@ class BaseDocument:
         """
 
         params = dict(
+            rev=rev,
             attachments=attachments,
             att_encoding_info=att_encoding_info,
             atts_since=atts_since,
@@ -51,7 +52,9 @@ class BaseDocument:
             revs_info=revs_info,
         )
 
-        return await self.__connection.query('GET', self._get_path(_id), params=params)
+        headers = {'Accept': 'application/json'}
+
+        return await self.__connection.query('GET', self._get_path(_id), params=params, headers=headers)
 
     async def put(self, _id: str, doc: dict, *,
                   rev: Optional[str] = None,
