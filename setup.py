@@ -9,7 +9,7 @@ import setuptools
 
 setuptools.setup(
     name='wheelchair',
-    version='0.1.6',
+    version='0.1.7',
     author='Vd',
     author_email='vd@vd2.org',
     url='https://github.com/vd2org/wheelchair',
