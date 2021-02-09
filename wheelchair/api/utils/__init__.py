@@ -6,3 +6,4 @@
 from .query import Query, StreamRequest, StreamResponse
 from .simple_scope import SimpleScope
 from .stale_options import StaleOptions
+from .raw_collation import RAW_COLLATION
