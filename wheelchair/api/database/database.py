@@ -148,7 +148,8 @@ class Database:
                    update: Optional[bool] = None,
                    stable: Optional[bool] = None,
                    stale: Optional[Union[bool, StaleOptions]] = None,
-                   execution_stats: Optional[bool] = None) -> dict:
+                   execution_stats: Optional[bool] = None,
+                   conflicts: Optional[bool] = None) -> dict:
         """\
         Executes find request using Mango declarative syntax.
 
@@ -168,6 +169,7 @@ class Database:
             stable=stable,
             stale=StaleOptions.format(stale),
             execution_stats=execution_stats,
+            conflicts=conflicts,
         )
 
         return await self.__connection.query('POST', [self.__name, '_find'], data=data)
