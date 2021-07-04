@@ -5,7 +5,6 @@
 
 from typing import Optional, Union, List
 
-from .scheduler import Scheduler
 from ..utils import SimpleScope
 
 
@@ -95,10 +94,6 @@ class Server(SimpleScope):
         )
 
         return await self._connection.query('POST', ['_replicate'], data=data)
-
-    @property
-    def scheduler(self) -> Scheduler:
-        return Scheduler(self._connection)
 
     async def up(self) -> dict:
         """\

@@ -14,6 +14,7 @@ from .auth import Auth, CookieAuth
 from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
 from .node import NodeProxy
+from .scheduler import Scheduler
 from .server import Server
 from .session import Session
 from .utils import Query
@@ -186,6 +187,10 @@ class Connection:
     @property
     def server(self) -> Server:
         return Server(self)
+
+    @property
+    def scheduler(self) -> Scheduler:
+        return Scheduler(self)
 
     @property
     def node(self) -> NodeProxy:
