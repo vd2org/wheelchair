@@ -11,7 +11,7 @@ from ..utils import SimpleScope
 class Server(SimpleScope):
     async def __call__(self) -> dict:
         """\
-        Return instance metadata.
+        Returns instance metadata.
 
         https://docs.couchdb.org/en/latest/api/server/common.html#get--
         """
