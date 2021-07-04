@@ -14,7 +14,7 @@ class Server(SimpleScope):
         """\
         Return instance metadata.
 
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--
+        https://docs.couchdb.org/en/latest/api/server/common.html#get--
         """
 
         return await self._connection.query('GET', [])
@@ -37,7 +37,7 @@ class Server(SimpleScope):
         """\
         Returns a list of all the databases.
 
-        http://docs.couchdb.org/en/latest/api/server/common.html#get--_all_dbs
+        https://docs.couchdb.org/en/latest/api/server/common.html#get--_all_dbs
         """
 
         params = dict(
