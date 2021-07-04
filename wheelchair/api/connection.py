@@ -11,6 +11,7 @@ from urllib.parse import urlsplit, urljoin, quote, urlencode
 from aiohttp import ClientSession, ClientTimeout
 
 from .auth import Auth, CookieAuth
+from .cluster_setup import ClusterSetup
 from .database import DatabaseProxy
 from .exceptions import RequestError, UnauthorizedError
 from .node import NodeProxy
@@ -187,6 +188,10 @@ class Connection:
     @property
     def server(self) -> Server:
         return Server(self)
+
+    @property
+    def cluster_setup(self) -> ClusterSetup:
+        return ClusterSetup(self)
 
     @property
     def scheduler(self) -> Scheduler:
