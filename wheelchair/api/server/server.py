@@ -5,6 +5,7 @@
 
 from typing import Optional, Union, List
 
+from .scheduler import Scheduler
 from ..utils import SimpleScope
 
 
@@ -66,6 +67,38 @@ class Server(SimpleScope):
         """
 
         return await self._connection.query('GET', ['_membership'])
+
+    async def replicate(self, source: Union[str, dict], target: Union[str, dict],
+                        source_proxy: Optional[str] = None,
+                        target_proxy: Optional[str] = None,
+                        filter: Optional[str] = None,
+                        doc_ids: Optional[List[str]] = None,
+                        create_target: Optional[bool] = None,
+                        continuous: Optional[bool] = None,
+                        cancel: Optional[bool] = None) -> dict:
+        """\
+        Manage transient replication.
+
+        https://docs.couchdb.org/en/stable/api/server/common.html#post--_replicate
+        """
+
+        data = dict(
+            source=source,
+            target=target,
+            source_proxy=source_proxy,
+            target_proxy=target_proxy,
+            filter=filter,
+            doc_ids=doc_ids,
+            create_target=create_target,
+            continuous=continuous,
+            cancel=cancel
+        )
+
+        return await self._connection.query('POST', ['_replicate'], data=data)
+
+    @property
+    def scheduler(self) -> Scheduler:
+        return Scheduler(self._connection)
 
     async def up(self) -> dict:
         """\

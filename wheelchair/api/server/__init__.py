@@ -3,4 +3,5 @@
 # Wheelchair is released under the MIT License (see LICENSE).
 
 
+from .scheduler import Scheduler
 from .server import Server
