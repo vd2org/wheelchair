@@ -66,3 +66,8 @@ class UnauthorizedError(RequestError):
 @RequestError.register_exception
 class FileExists(RequestError):
     name = 'file_exists'
+
+
+@RequestError.register_exception
+class DocumentUpdateConflict(RequestError):
+    name = 'conflict'
